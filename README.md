@@ -60,6 +60,10 @@ Requires Node 22 or newer (built with Node 24). The NASA-derived data (16 MB) is
 - **3D terrain** from LOLA with ray-marched shadows, an overview and a lander-eye camera.
 - **Share** copies a link that restores sites, dates, limits, time and custom coordinates.
 - **Export** the panorama as PNG and the windows as CSV.
+- **GO map.** A toggle on the south-pole map colours the ground itself by verdict for the current
+  landing date, mission length and limits. Every square is scored as a landing site, the map
+  sharpens as you zoom, and it recolours when the date or a limit changes. Double-click a square to
+  open that spot as a site.
 - **Guided tour.** The Tour button (also on the opening screen) walks through the default scenario in
   eight captioned steps: the polar sky, the timeline, a GO site, a NO-GO site, a two-week slip, the 3D
   terrain and the data sources. Arrow keys move between steps, `Esc` exits and restores your scenario.
@@ -123,6 +127,9 @@ its rim averages over 55%.
 - Sites marked "approx." are region centres or planning estimates. At the pole, moving 1 km changes the
   result. Faustini Rim A and Nobile Rim 1 were placed on the nearest ridge crest in the DEM.
 - The polar DEM is 80 m per pixel. Features smaller than that are not in the horizon.
+- The GO map scores each square from the 400 m grid with 2° azimuth steps. On the curated polar sites
+  its verdict matches the full-resolution pipeline about 94% of the time (`app/src/data/dem.test.ts`);
+  treat it as a guide to where to look, then open the spot for the finer calculation.
 - Custom coordinates use coarser grids in the browser: 400 m at the pole, about 7.6 km elsewhere.
 - Outside the published date range the app falls back to an analytic lunar model (Meeus), good to
   about 0.5°, and shows an "Approximate" badge.

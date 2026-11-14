@@ -58,7 +58,12 @@ export function raycastHorizon(
   elev: ElevationFn,
   lat: number,
   lon: number,
-  opts: { azStepDeg?: number; maxRangeKm?: number; firstStepKm?: number; observerHeightM?: number; source: string; siteKey: string },
+  opts: {
+    azStepDeg?: number; maxRangeKm?: number; firstStepKm?: number; observerHeightM?: number;
+    /** ratio between successive sample distances beyond 15 km; larger is faster and coarser */
+    farGrowth?: number;
+    source: string; siteKey: string;
+  },
 ): { profile: HorizonProfile; siteElevationM: number } {
   const azStep = opts.azStepDeg ?? 0.5;
   const maxKm = opts.maxRangeKm ?? 300;
@@ -69,7 +74,7 @@ export function raycastHorizon(
 
   const dists: number[] = [];
   for (let d = first; d < 15; d += first) dists.push(d);
-  for (let d = 15; d < maxKm; d *= 1.01) dists.push(d);
+  for (let d = 15; d < maxKm; d *= opts.farGrowth ?? 1.01) dists.push(d);
 
   const n = Math.round(360 / azStep);
   const elevation = new Float32Array(n);
@@ -97,6 +102,13 @@ export function raycastHorizon(
     },
   };
 }
+
+/**
+ * Ray-cast settings for the GO map, where thousands of points are scored: about 3 ms a point
+ * against about 50 ms at the custom-site settings. dem.test.ts checks that the verdicts still agree
+ * with the pipeline's full-resolution horizons.
+ */
+export const MAP_HORIZON = { azStepDeg: 2, firstStepKm: 0.4, farGrowth: 1.06, maxRangeKm: 300 };
 
 /** n x n patch on the local tangent plane, row 0 = north, col 0 = west. */
 export function cropPatch(elev: ElevationFn, lat: number, lon: number, n: number, pixelM: number, source: string): TerrainPatch {
