@@ -1,6 +1,7 @@
 // Scenario <-> URL. Compact query params so a link can be pasted into chat:
 //   ?s=connecting-ridge,malapert-massif&f=connecting-ridge&start=2027-09-15&d=14&t=36&c=dark:50,both:6
 // Custom sites ride along as x=lat_lon;lat_lon so the link works on another machine.
+// Expert mode adds m=expert; Simple is the default and adds nothing.
 
 import { DAY, HOUR, isoDate, parseIsoDate } from "../lib/time";
 import { DEFAULT_CONSTRAINTS, type Constraints } from "../lib/visibility";
@@ -27,6 +28,7 @@ export function encodeScenario(s: ScenarioState): string {
   if (s.customSites.length) p.set("x", s.customSites.map((x) => `${x.lat}_${x.lon}`).join(";"));
   if (s.title !== DEFAULT_SCENARIO.title) p.set("n", s.title);
   if (s.view !== "panorama") p.set("v", "3d");
+  if (!s.simple) p.set("m", "expert");
   // keep commas, colons and semicolons readable
   return p.toString().replace(/%2C/g, ",").replace(/%3A/g, ":").replace(/%3B/g, ";");
 }
@@ -72,5 +74,6 @@ export function decodeScenario(search: string): Partial<ScenarioState> | null {
   const n = p.get("n");
   if (n) out.title = n.slice(0, 80);
   if (p.get("v") === "3d") out.view = "terrain";
+  if (p.get("m") === "expert") out.simple = false;
   return out;
 }
