@@ -46,7 +46,7 @@ export function usePlayback() {
 export function scenarioOf(s: ScenarioState): ScenarioState {
   return {
     selectedIds: s.selectedIds, focusId: s.focusId, startMs: s.startMs, days: s.days, tMs: s.tMs,
-    constraints: s.constraints, customSites: s.customSites, title: s.title, view: s.view,
+    constraints: s.constraints, customSites: s.customSites, title: s.title, view: s.view, simple: s.simple,
   };
 }
 
@@ -65,7 +65,7 @@ export function useUrlSync(enabled: boolean) {
       if (
         s.selectedIds === prev.selectedIds && s.focusId === prev.focusId && s.startMs === prev.startMs &&
         s.days === prev.days && s.tMs === prev.tMs && s.constraints === prev.constraints &&
-        s.customSites === prev.customSites && s.title === prev.title && s.view === prev.view
+        s.customSites === prev.customSites && s.title === prev.title && s.view === prev.view && s.simple === prev.simple
       ) return;
       if (timer === undefined) timer = window.setTimeout(write, 400);
     });

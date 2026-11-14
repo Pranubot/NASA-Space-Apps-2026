@@ -62,7 +62,7 @@ function Guide() {
       </p>
       <h3>Reading the verdicts</h3>
       <p>
-        Each site is checked against the mission limits. <strong>GO</strong> passes with room to spare, <strong>MARGINAL</strong> is within
+        Each site is checked against the mission limits. <strong>GO</strong> passes with room to spare, <strong>MARGINAL</strong> (&ldquo;Close call&rdquo; in Simple mode) is within
         20% of a limit, and <strong>NO-GO</strong> breaks one. Limits marked ENG belong to engineering (battery, antenna, array). Limits
         marked OPS belong to operations. The "decided by" line names the limit that sets the result, so science and engineering argue about
         the same number.

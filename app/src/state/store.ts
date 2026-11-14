@@ -45,6 +45,8 @@ export interface ScenarioState {
   customSites: Site[];
   title: string;
   view: HeroView;
+  /** Simple hides the expert numbers (angles, coordinates, extra metrics) and swaps jargon for plain words */
+  simple: boolean;
 }
 
 interface State extends ScenarioState {
@@ -62,8 +64,6 @@ interface State extends ScenarioState {
   introOpen: boolean;
   hoverSiteId: string | null;
   toast: { id: number; text: string } | null;
-  /** Simple hides the expert numbers (angles, coordinates, extra metrics) so newcomers see the answer first */
-  simple: boolean;
 
   setDataset(d: Dataset): void;
   applyScenario(s: Partial<ScenarioState>): void;
@@ -243,4 +243,27 @@ export function allSites(s: Pick<State, "dataset" | "customSites">): Site[] {
 
 export function findSite(s: Pick<State, "dataset" | "customSites">, id: string): Site | undefined {
   return s.dataset?.sites.find((x) => x.id === id) ?? s.customSites.find((x) => x.id === id);
+}
+
+/** Plain words for Simple mode. Keys are the exact Expert labels; anything not listed stays as is. */
+const PLAIN: Record<string, string> = {
+  MARGINAL: "CLOSE CALL",
+  "Power + comms": "Work + talk home",
+  "power + comms": "work + talk home",
+  "Power + comms needed": "Work + talk home needed",
+  "Power only": "Power, no link home",
+  "Comms only": "Link home, no power",
+  "Longest darkness": "Longest night",
+  "Longest comms gap": "Longest time without Earth",
+  Touchdown: "Landing conditions",
+  Both: "Work + talk",
+  Output: "Power",
+  "Bars: power + comms, h/day": "Bars: hours a day to work + talk home",
+  "Power + comms, h/day": "Hours a day to work + talk home",
+};
+
+/** `say("Power + comms")` gives the plain label in Simple mode and the original in Expert. */
+export function useSay() {
+  const simple = useStore((s) => s.simple);
+  return (text: string) => (simple && PLAIN[text]) || text;
 }

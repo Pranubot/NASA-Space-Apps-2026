@@ -8,7 +8,7 @@ import { COLOR, FONT_MONO, FONT_UI, VERDICT_COLOR } from "../lib/theme";
 import { fmtDate, fmtDayMonth } from "../lib/time";
 import { cachedFlags, useAllSummaries, useSiteData, yearGeometry, type SiteData } from "../hooks/useSiteData";
 import { useSize } from "../hooks/useApp";
-import { SLIP_AFTER_DAYS, SLIP_BEFORE_DAYS, findSite, useStore, type AnalysisTab } from "../state/store";
+import { SLIP_AFTER_DAYS, SLIP_BEFORE_DAYS, findSite, useSay, useStore, type AnalysisTab } from "../state/store";
 import { VerdictChip, VerdictIcon } from "./Scorecards";
 
 /** Verdict mark that does not rely on colour: circle, triangle, cross. */
@@ -30,6 +30,7 @@ function SlipChart({ data }: { data: SiteData }) {
   const days = useStore((s) => s.days);
   const setStart = useStore((s) => s.setStart);
   const showToast = useStore((s) => s.showToast);
+  const say = useSay();
   const [hover, setHover] = useState<number | null>(null);
 
   const pts = useMemo(
@@ -74,7 +75,7 @@ function SlipChart({ data }: { data: SiteData }) {
               <text x={ML - 6} y={y(v) + 3.5} textAnchor="end" fontFamily={FONT_MONO} fontSize={10} fill={COLOR.text3}>{v}</text>
             </g>
           ))}
-          <text x={ML} y={11} fontFamily={FONT_UI} fontSize={10.5} fill={COLOR.text2}>Bars: power + comms, h/day</text>
+          <text x={ML} y={11} fontFamily={FONT_UI} fontSize={10.5} fill={COLOR.text2}>{say("Bars: power + comms, h/day")}</text>
           <text x={w - MR} y={11} textAnchor="end" fontFamily={FONT_UI} fontSize={10.5} fill={COLOR.text2}>Line: longest darkness, h</text>
           {[0, Math.round(darkMax / 2), Math.round(darkMax)].map((v) => (
             <text key={v} x={w - MR + 6} y={yd(v) + 3.5} fontFamily={FONT_MONO} fontSize={10} fill={COLOR.text3}>{v}</text>
@@ -122,7 +123,7 @@ function SlipChart({ data }: { data: SiteData }) {
             {hp.offsetDays === 0 ? "Current plan" : `${Math.abs(hp.offsetDays)} d ${hp.offsetDays > 0 ? "later" : "earlier"}`} · <span className="num">{fmtDate(hp.startMs)}</span>
           </strong>
           <span><VerdictChip v={hp.verdict} /></span>
-          <span className="num">{hp.bothHoursPerDay.toFixed(1)} h/day power + comms · {Math.round(hp.longestDarkH)} h dark</span>
+          <span className="num">{hp.bothHoursPerDay.toFixed(1)} h/day {say("power + comms")} · {Math.round(hp.longestDarkH)} h dark</span>
           <span className="tip__dim">{hp.driver.reason}</span>
           {hp.offsetDays !== 0 && <span className="tip__dim">Click to land on this date</span>}
         </div>
@@ -219,6 +220,7 @@ function TradeScatter() {
   const focusId = useStore((s) => s.focusId);
   const focus = useStore((s) => s.focus);
   const [hover, setHover] = useState<string | null>(null);
+  const say = useSay();
 
   const ML = 30, MR = 12, MT = 20, MB = 30;
   const w = size.w, h = size.h;
@@ -253,7 +255,7 @@ function TradeScatter() {
             <text key={v} x={x(v)} y={h - 14} textAnchor="middle" fontFamily={FONT_MONO} fontSize={10} fill={COLOR.text3}>{v}</text>
           ))}
           <text x={ML + pw / 2} y={h - 2} textAnchor="middle" fontFamily={FONT_UI} fontSize={10} fill={COLOR.text3}>science value (team-assigned)</text>
-          <text x={ML} y={10} fontFamily={FONT_UI} fontSize={10.5} fill={COLOR.text2}>Power + comms, h/day</text>
+          <text x={ML} y={10} fontFamily={FONT_UI} fontSize={10.5} fill={COLOR.text2}>{say("Power + comms, h/day")}</text>
           {pts.map((p) => {
             const sel = selected.includes(p.s.site.id);
             const cx = x(p.sx), cy = y(p.sy);

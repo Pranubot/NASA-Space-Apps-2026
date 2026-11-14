@@ -11,7 +11,7 @@ import type { SiteData } from "../hooks/useSiteData";
 import { useSelectedData } from "../hooks/useSiteData";
 import { useSize } from "../hooks/useApp";
 import { TRACK_AXIS_H, TRACK_ROW_H } from "../hooks/useSiteDrag";
-import { MAX_SELECTED, SPEEDS, useStore } from "../state/store";
+import { MAX_SELECTED, SPEEDS, useSay, useStore } from "../state/store";
 
 const LABEL_W = 168;
 const ROW_H = TRACK_ROW_H;
@@ -135,6 +135,7 @@ export function Timeline() {
   const dropTarget = useStore((s) => s.drag?.action?.targetId ?? null);
   const dragActive = useStore((s) => s.drag !== null);
   const [tip, setTip] = useState<Tip | null>(null);
+  const say = useSay();
   const dragging = useRef(false);
   const hasSlot = trackCount < MAX_SELECTED;
 
@@ -188,7 +189,7 @@ export function Timeline() {
       lines: [
         describe("Sunlit", d.metrics.sunWindows, "Dark"),
         describe("Earth in view", d.metrics.earthWindows, "No direct link"),
-        describe("Power + comms", d.metrics.bothWindows, "No power + comms window"),
+        describe(say("Power + comms"), d.metrics.bothWindows, `No ${say("power + comms")} window`),
       ],
     });
   };
@@ -205,8 +206,8 @@ export function Timeline() {
         <div className="legend">
           <span><SunIcon size={12} color={COLOR.sun} /> Sun</span>
           <span><EarthIcon size={12} color={COLOR.earth} /> Earth</span>
-          <span><CircleCheck size={12} color={COLOR.both} /> Both</span>
-          <span><i className="legend__power" /> Output</span>
+          <span><CircleCheck size={12} color={COLOR.both} /> {say("Both")}</span>
+          <span><i className="legend__power" /> {say("Output")}</span>
         </div>
         <TransportBar />
         <button
@@ -261,7 +262,7 @@ export function Timeline() {
                   <i style={{ background: VERDICT_COLOR[d.evaluation.overall] }} />
                   {d.site.name}
                 </span>
-                <span className="tl-label__sub num">{Math.round(d.metrics.bothPct)}% power + comms</span>
+                <span className="tl-label__sub num">{Math.round(d.metrics.bothPct)}% {say("power + comms")}</span>
               </button>
               {rows.length > 1 && (
                 <button type="button" className="tl-remove" onClick={() => toggle(d.site.id)} aria-label={`Remove the ${d.site.name} track`} title="Remove track">

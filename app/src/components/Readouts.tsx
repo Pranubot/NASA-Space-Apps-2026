@@ -10,7 +10,7 @@ import { COLOR } from "../lib/theme";
 import { cardinal, fmtDuration, HOUR } from "../lib/time";
 import { earthMargin, horizonAt, nextChange, sunMargin, type Instant, type NextChange } from "../lib/visibility";
 import type { SiteData } from "../hooks/useSiteData";
-import { useStore } from "../state/store";
+import { useSay, useStore } from "../state/store";
 
 /** Close-up at 1:1 angular scale: what a camera pointed at the body would frame. */
 function BodyLens({
@@ -86,6 +86,8 @@ const signed = (v: number, d = 2) => `${v >= 0 ? "+" : "−"}${Math.abs(v).toFix
 
 export function Readouts({ data, inst }: { data: SiteData; inst: Instant }) {
   const c = useStore((s) => s.constraints);
+  const simple = useStore((s) => s.simple);
+  const say = useSay();
   const { geom } = data;
   const sunNext = useMemo(() => nextChange(geom, sunMargin(geom, c), inst.tMs), [geom, c, inst.tMs]);
   const earthNext = useMemo(() => nextChange(geom, earthMargin(geom, c), inst.tMs), [geom, c, inst.tMs]);
@@ -93,7 +95,7 @@ export function Readouts({ data, inst }: { data: SiteData; inst: Instant }) {
   const phase = earthPhase(sep);
   const phaseAngle =
     (Math.atan2(-(inst.sunEl - inst.earthEl), ((((inst.sunAz - inst.earthAz + 540) % 360) - 180) * Math.cos((inst.earthEl * Math.PI) / 180))) * 180) / Math.PI;
-  const text = narrate(data.site, inst, sunNext, earthNext, data.metrics.earthPct === 0);
+  const text = narrate(data.site, inst, sunNext, earthNext, data.metrics.earthPct === 0, simple);
   const powerPct = Math.round((inst.powerW / c.panelW) * 100);
 
   return (
@@ -139,7 +141,7 @@ export function Readouts({ data, inst }: { data: SiteData; inst: Instant }) {
           <div className="ro__body">
             <h3>
               <Zap size={14} /> Power
-              <span className={`state ${inst.both ? "state--both" : "state--off"}`}>{inst.both ? "Power + comms" : inst.lit ? "Power only" : inst.earthVisible ? "Comms only" : "Neither"}</span>
+              <span className={`state ${inst.both ? "state--both" : "state--off"}`}>{say(inst.both ? "Power + comms" : inst.lit ? "Power only" : inst.earthVisible ? "Comms only" : "Neither")}</span>
             </h3>
             <div className="power">
               <span className="power__value num">{Math.round(inst.powerW)}</span>

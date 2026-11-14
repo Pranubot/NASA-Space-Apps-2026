@@ -9,7 +9,7 @@ import { CATEGORY_LABEL, VERDICT_COLOR } from "../lib/theme";
 import { fmtDuration } from "../lib/time";
 import type { SiteData } from "../hooks/useSiteData";
 import { useSelectedData } from "../hooks/useSiteData";
-import { useStore } from "../state/store";
+import { useSay, useStore } from "../state/store";
 
 export function VerdictIcon({ v, size = 14 }: { v: Verdict; size?: number }) {
   const color = VERDICT_COLOR[v];
@@ -19,10 +19,11 @@ export function VerdictIcon({ v, size = 14 }: { v: Verdict; size?: number }) {
 }
 
 export function VerdictChip({ v }: { v: Verdict }) {
+  const say = useSay();
   return (
     <span className={`verdict verdict--${v === "NO-GO" ? "nogo" : v.toLowerCase()}`}>
       <VerdictIcon v={v} size={12} />
-      {v}
+      {say(v)}
     </span>
   );
 }
@@ -71,6 +72,7 @@ export function Scorecards() {
   const startMs = useStore((s) => s.startMs);
   const days = useStore((s) => s.days);
   const showToast = useStore((s) => s.showToast);
+  const say = useSay();
   const rows = all.filter((d): d is SiteData => d !== null);
   const focused = rows.find((d) => d.site.id === focusId);
 
@@ -130,7 +132,7 @@ export function Scorecards() {
                   <span className={`owner owner--${chk.owner.toLowerCase()} x-expert`} title={chk.owner === "ENG" ? "Engineering limit" : "Operations limit"}>
                     {chk.owner}
                   </span>
-                  {chk.label}
+                  {say(chk.label)}
                   <span className="compare__limit num x-expert">{chk.limit}</span>
                 </th>
                 {rows.map((d) => {
@@ -150,7 +152,7 @@ export function Scorecards() {
               const b = best(rows, r);
               return (
                 <tr key={r.label} className={`${r.strong ? "is-strong" : ""}${r.expert ? " x-expert" : ""}`}>
-                  <th scope="row" title={r.hint}>{r.label}</th>
+                  <th scope="row" title={r.hint}>{say(r.label)}</th>
                   {rows.map((d, i) => (
                     <td key={d.site.id} className={`num${i === b ? " is-best" : ""}`}>
                       {r.render(d)}
