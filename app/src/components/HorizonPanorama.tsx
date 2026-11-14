@@ -113,8 +113,8 @@ function drawStars(cv: HTMLCanvasElement, v: View, w: number, h: number, dim: nu
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, w, h);
   const sky = ctx.createLinearGradient(0, MT, 0, MT + v.ph);
-  sky.addColorStop(0, "#04070e");
-  sky.addColorStop(1, "#0a1222");
+  sky.addColorStop(0, "#000000");
+  sky.addColorStop(1, "#08090b");
   ctx.fillStyle = sky;
   ctx.fillRect(ML, MT, v.pw, v.ph);
   ctx.save();
@@ -128,7 +128,7 @@ function drawStars(cv: HTMLCanvasElement, v: View, w: number, h: number, dim: nu
     const y = MT + st.f * v.ph;
     const r = 0.45 + st.mag * 1.25;
     ctx.globalAlpha = (0.25 + st.mag * 0.75) * dim;
-    ctx.fillStyle = st.tint > 0.85 ? "#ffd9a8" : st.tint < 0.15 ? "#b9d2ff" : "#e8eefc";
+    ctx.fillStyle = st.tint > 0.85 ? "#ffe2bd" : st.tint < 0.15 ? "#d3e2ff" : "#f2f2f2";
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fill();
@@ -162,13 +162,13 @@ function drawTerrain(cv: HTMLCanvasElement, v: View, w: number, h: number, hz: H
     const d = horizonDistAt(hz, az);
     const k = d === null ? 0.45 : clamp(Math.log10(Math.max(d, 0.3) / 0.3) / 3, 0, 1);
     const l = Math.round(32 + k * 66);
-    ctx.fillStyle = `rgb(${l},${l + 3},${l + 12})`;
+    ctx.fillStyle = `rgb(${l},${l},${l + 2})`;
     ctx.fillRect(ML + c, y, 1.5, bottom - y);
   }
   // darken towards the foreground
   const g = ctx.createLinearGradient(0, MT, 0, bottom);
-  g.addColorStop(0, "rgba(6,9,16,0)");
-  g.addColorStop(1, "rgba(6,9,16,0.86)");
+  g.addColorStop(0, "rgba(0,0,0,0)");
+  g.addColorStop(1, "rgba(0,0,0,0.88)");
   ctx.globalCompositeOperation = "source-atop";
   ctx.fillStyle = g;
   ctx.fillRect(ML, MT, v.pw, v.ph);
@@ -177,7 +177,7 @@ function drawTerrain(cv: HTMLCanvasElement, v: View, w: number, h: number, hz: H
   // ridge line
   ctx.beginPath();
   for (let c = 0; c <= cols; c++) (c ? ctx.lineTo : ctx.moveTo).call(ctx, ML + c, ys[c]);
-  ctx.strokeStyle = "rgba(186,198,222,0.55)";
+  ctx.strokeStyle = "rgba(205,205,205,0.5)";
   ctx.lineWidth = 1;
   ctx.stroke();
 

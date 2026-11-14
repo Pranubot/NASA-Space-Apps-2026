@@ -136,6 +136,7 @@ export function Timeline() {
   const dragActive = useStore((s) => s.drag !== null);
   const [tip, setTip] = useState<Tip | null>(null);
   const say = useSay();
+  const simple = useStore((s) => s.simple);
   const dragging = useRef(false);
   const hasSlot = trackCount < MAX_SELECTED;
 
@@ -262,7 +263,7 @@ export function Timeline() {
                   <i style={{ background: VERDICT_COLOR[d.evaluation.overall] }} />
                   {d.site.name}
                 </span>
-                <span className="tl-label__sub num">{Math.round(d.metrics.bothPct)}% {say("power + comms")}</span>
+                <span className="tl-label__sub num" title={`${Math.round(d.metrics.bothPct)}% of the mission with ${say("power + comms")}`}>{Math.round(d.metrics.bothPct)}% {simple ? say("Both").toLowerCase() : "power + comms"}</span>
               </button>
               {rows.length > 1 && (
                 <button type="button" className="tl-remove" onClick={() => toggle(d.site.id)} aria-label={`Remove the ${d.site.name} track`} title="Remove track">

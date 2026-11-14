@@ -225,7 +225,7 @@ export function MoonGlobe() {
                   <circle cx={p[0]} cy={p[1]} r={1.6} fill={color} />
                   <text
                     x={clamp(p[0], 46, w - 46)} y={p[1] + dy} textAnchor="middle" fontFamily={FONT_UI} fontSize={10} fontWeight={600}
-                    fill={color} stroke="#070b14" strokeWidth={3} paintOrder="stroke"
+                    fill={color} stroke="#000" strokeWidth={3} paintOrder="stroke"
                   >
                     {label}
                   </text>

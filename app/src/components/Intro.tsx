@@ -96,7 +96,7 @@ function StarField() {
   }, []);
   return (
     <points geometry={geo}>
-      <pointsMaterial size={0.11} color="#cfd9f0" sizeAttenuation transparent opacity={0.75} />
+      <pointsMaterial size={0.11} color="#e0e0e0" sizeAttenuation transparent opacity={0.75} />
     </points>
   );
 }
@@ -143,7 +143,7 @@ export default function Intro() {
       transition={{ duration: reduced ? 0.2 : 0.75, ease: [0.16, 1, 0.3, 1] }}
     >
       <Canvas className="intro__canvas" camera={{ fov: 32, near: 0.05, far: 200, position: [3.4, 0.4, 0.8] }} dpr={[1, 2]}>
-        <color attach="background" args={["#020409"]} />
+        <color attach="background" args={["#000000"]} />
         <StarField />
         <Suspense fallback={null}>
           {sub && <Globe sunLat={sub.sLat} sunLon={sub.sLon} sites={sites} still={reduced} />}

@@ -111,7 +111,7 @@ void main() {
 
   float lambert = max(0.0, dot(nl, vec3(dir * cosEl, sinEl)));
   float sun = lit * clamp(0.16 + 3.4 * lambert, 0.0, 1.0);
-  vec3 shade = vec3(0.045, 0.062, 0.105) * (0.45 + 1.3 * relief);
+  vec3 shade = vec3(0.05, 0.05, 0.055) * (0.45 + 1.3 * relief);
   vec3 col = shade + vec3(1.0, 0.94, 0.82) * sun * 0.92;
   outColor = vec4(col, 1.0);
 }`;
@@ -393,10 +393,10 @@ export function SiteMap() {
                   const left = x > w / 2;
                   return (
                     <g key={label}>
-                      <circle cx={x} cy={y} r={5.5} fill={color} stroke="#070b14" strokeWidth={2} />
+                      <circle cx={x} cy={y} r={5.5} fill={color} stroke="#000" strokeWidth={2} />
                       <text
                         x={left ? x - 10 : x + 10} y={y + 3.5} textAnchor={left ? "end" : "start"} fontFamily={FONT_UI} fontSize={10.5} fontWeight={650}
-                        fill={color} stroke="#070b14" strokeWidth={3} paintOrder="stroke"
+                        fill={color} stroke="#000" strokeWidth={3} paintOrder="stroke"
                       >
                         to {label}
                       </text>

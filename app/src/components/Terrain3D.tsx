@@ -206,7 +206,7 @@ function Label({ text, color, position, large = false }: { text: string; color: 
     ctx.textBaseline = "middle";
     ctx.lineJoin = "round";
     ctx.lineWidth = 7;
-    ctx.strokeStyle = "rgba(3,5,10,0.9)";
+    ctx.strokeStyle = "rgba(0,0,0,0.9)";
     ctx.strokeText(text, 10, 25);
     ctx.fillStyle = color;
     ctx.fillText(text, 10, 25);
@@ -333,7 +333,7 @@ export default function Terrain3D({ data, inst }: { data: SiteData; inst: Instan
           camera={{ position: [sizeKm * 0.42, sizeKm * 0.36, sizeKm * 0.62], fov: 38, near: 0.02, far: 6000 }}
           gl={{ antialias: true, preserveDrawingBuffer: true }} dpr={[1, 2]}
         >
-          <color attach="background" args={["#03050a"]} />
+          <color attach="background" args={["#000000"]} />
           <Stars radius={2400} depth={300} count={2600} factor={22} saturation={0} fade speed={0} />
           <TerrainMesh patch={patch} inst={inst} exag={exag} contours={contours} siteElevationM={site.elevationM ?? 0} />
           <Suspense fallback={null}>
