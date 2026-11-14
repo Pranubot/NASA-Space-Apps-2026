@@ -2325,3 +2325,37 @@ kbd {
 .tour__nav .textbtn {
   margin-right: auto;
 }
+
+/* ------------------------------------------------------------------ GO map */
+
+.gomap,
+.gomap__read {
+  pointer-events: none;
+}
+.gomap__read {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  display: grid;
+  gap: 1px;
+  padding: 6px 9px;
+  border-radius: var(--r);
+  background: rgba(11, 17, 32, 0.88);
+  color: var(--text-2);
+  font-size: 11px;
+  line-height: 1.45;
+}
+.gomap__key,
+.gomap__key > span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.gomap__key {
+  gap: 10px;
+  color: var(--text);
+}
+.gomap__dim {
+  color: var(--text-3);
+}

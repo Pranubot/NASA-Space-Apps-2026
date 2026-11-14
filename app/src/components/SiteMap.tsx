@@ -13,6 +13,7 @@ import { useAllSummaries } from "../hooks/useSiteData";
 import { useSize } from "../hooks/useApp";
 import { allSites, useStore } from "../state/store";
 import { Pin, SiteTip, type Tip } from "./MapPin";
+import { GoMap } from "./GoMap";
 import { MoonGlobe } from "./MoonGlobe";
 
 const R_M = R_MOON_KM * 1000;
@@ -195,6 +196,8 @@ export function SiteMap() {
   const [mode, setMode] = useState<"shadows" | "relief">("shadows");
   const [view, setView] = useState({ cx: 0, cy: 0, half: POLAR_HALF_M * 1.04 });
   const [tip, setTip] = useState<Tip | null>(null);
+  const [goMap, setGoMap] = useState(false);
+  const [cursor, setCursor] = useState<readonly [number, number] | null>(null);
   const drag = useRef<{ x: number; y: number; cx: number; cy: number; moved: boolean } | null>(null);
 
   const sites = useMemo(() => allSites({ dataset: ds, customSites }), [ds, customSites]);
@@ -288,6 +291,16 @@ export function SiteMap() {
     <section className="panel map" aria-label="Site map">
       <header className="panel__head">
         <h2>Sites</h2>
+        {region === "polar" && grid && (
+          <div className="seg">
+            <button
+              type="button" className={goMap ? "is-on" : ""} aria-pressed={goMap} onClick={() => setGoMap((g) => !g)}
+              title="Colour the ground by verdict: where would this mission work?"
+            >
+              GO map
+            </button>
+          </div>
+        )}
         <div className="seg" role="group" aria-label="Map region">
           <button type="button" className={region === "polar" ? "is-on" : ""} aria-pressed={region === "polar"} onClick={() => setRegion("polar")}>
             South pole
@@ -307,6 +320,7 @@ export function SiteMap() {
           drag.current = { x: e.clientX, y: e.clientY, cx: view.cx, cy: view.cy, moved: false };
         }}
         onPointerMove={(e) => {
+          if (goMap) setCursor(local(e));
           const d = drag.current;
           if (!d) return;
           const dx = e.clientX - d.x, dy = e.clientY - d.y;
@@ -317,12 +331,14 @@ export function SiteMap() {
           }
         }}
         onPointerUp={() => (drag.current = null)}
+        onPointerLeave={() => setCursor(null)}
         onDoubleClick={(e) => {
           const ll = latLonAt(...local(e));
           if (ll) addCustom(Math.round(ll[0] * 1000) / 1000, Math.round(ll[1] * 1000) / 1000);
         }}
       >
         {region === "polar" && <canvas ref={canvasRef} className="map__canvas" style={{ width: w, height: h }} />}
+        {region === "polar" && goMap && grid && w > 0 && <GoMap grid={grid} view={view} w={w} h={h} scale={scale} cursor={cursor} />}
         {w > 0 && (
           <svg className="map__svg" width={w} height={h}>
             {region === "polar" && (
