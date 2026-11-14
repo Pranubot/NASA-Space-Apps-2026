@@ -649,9 +649,6 @@ input[type="checkbox"] {
 .map__view:active {
   cursor: grabbing;
 }
-.map__view--global {
-  cursor: crosshair;
-}
 .map__canvas,
 .map__svg {
   position: absolute;
@@ -683,14 +680,21 @@ input[type="checkbox"] {
     opacity: 0;
   }
 }
-.map__caption {
+.map__view[hidden] {
+  display: none;
+}
+.map__view--globe {
+  background: radial-gradient(circle at 50% 45%, #0a1020 0%, #04060c 70%);
+}
+.map__status {
   position: absolute;
-  left: 12px;
-  right: 12px;
+  top: 8px;
+  left: 10px;
+  right: 10px;
   color: var(--text-2);
-  font-size: 11.5px;
-  line-height: 1.5;
-  text-wrap: pretty;
+  font-size: 11px;
+  pointer-events: none;
+  text-shadow: 0 1px 3px #000;
 }
 .map__tools {
   position: absolute;

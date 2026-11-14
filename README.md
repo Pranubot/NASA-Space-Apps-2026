@@ -38,7 +38,7 @@ Requires Node 22 or newer (built with Node 24). The NASA-derived data (16 MB) is
   current sky.
 - **Live shadow map of the south pole.** The LOLA elevation model is shaded in a WebGL shader that
   ray-marches towards the Sun at the current time, so real shadows sweep across the craters as time
-  plays. Switch to a whole-Moon map with the day/night line.
+  plays. Switch to a whole-Moon globe you can turn, lit from the real Sun direction.
 - **26 curated sites**: Artemis III candidate regions, CLPS landers, a commercial lander, international
   missions, the six Apollo sites, and the permanently shadowed floor of Shackleton. Add any coordinate
   by typing it or double-clicking the map; its horizon is computed from LOLA in the browser.
