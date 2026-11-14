@@ -25,21 +25,26 @@ const DEFS: Def[] = [
   { key: "panelW", owner: "ENG", label: "Array rating", hint: "Rated solar array power", min: 100, max: 5000, step: 100, fmt: (v) => `${v} W` },
 ];
 
-export function ConstraintsPanel() {
+export function ConstraintsPanel({ embedded = false }: { embedded?: boolean }) {
   const c = useStore((s) => s.constraints);
   const set = useStore((s) => s.setConstraint);
   const reset = useStore((s) => s.resetConstraints);
   // on short screens the comparison needs the room; limits open on demand
-  const [open, setOpen] = useState(() => window.innerHeight >= 820);
+  const [openState, setOpen] = useState(() => window.innerHeight >= 820);
+  const open = embedded || openState;
   const changed = (Object.keys(DEFAULT_CONSTRAINTS) as (keyof Constraints)[]).some((k) => c[k] !== DEFAULT_CONSTRAINTS[k]);
 
   return (
     <section className="panel constraints" aria-label="Mission limits">
       <header className="panel__head">
-        <button type="button" className="constraints__toggle" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-          <ChevronDown size={14} className={open ? "is-open" : ""} />
+        {embedded ? (
           <h2>Mission limits</h2>
-        </button>
+        ) : (
+          <button type="button" className="constraints__toggle" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+            <ChevronDown size={14} className={open ? "is-open" : ""} />
+            <h2>Mission limits</h2>
+          </button>
+        )}
         <span className="panel__sub">
           {open ? "Verdicts update as you drag" : `battery ${c.maxDarkH} h · ${c.minBothHoursPerDay} h/day · gap ${c.maxCommsGapH} h`}
         </span>

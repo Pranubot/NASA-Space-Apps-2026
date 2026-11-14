@@ -139,10 +139,15 @@ mirrors the same values for SVG and canvas drawing.
 
 ## Layout
 
-- App shell is a full-viewport grid: 52 px top bar, flexible main row, bottom dock of
-  `clamp(196px, 27vh, 250px)`. No page scroll at desktop sizes; panels scroll internally.
-- Main row: left rail `clamp(264px, 20.5vw, 328px)`, flexible centre, right rail
-  `clamp(352px, 25.5vw, 404px)`. Dock: flexible timeline plus `clamp(380px, 33vw, 520px)` analysis.
+- Video-editor model: bin (map and site list) on the left, preview (the sky) in the centre, inspector
+  on the right showing one tab at a time (Compare, Limits, What if), timeline tracks along the bottom.
+- App shell is a full-viewport grid: 52 px top bar, flexible main row, 204 px timeline dock (three
+  tracks). No page scroll at desktop sizes; panels scroll internally.
+- Main row: left rail `clamp(264px, 20.5vw, 328px)`, flexible centre, inspector
+  `clamp(352px, 25.5vw, 404px)`.
+- Sites are dragged from the bin onto the timeline or inspector. Drop zones show a dashed outline
+  while a drag is in progress and a solid light outline when the drop would land; a chip follows the
+  pointer and says what the drop will do.
 - Gaps between panels are 1 px showing `line`. Panel padding is 12 px horizontal; panel headers are
   38 px tall.
 - Below 1100 px the panels stack in one column with the sky first and the page scrolls.

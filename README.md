@@ -42,14 +42,18 @@ Requires Node 22 or newer (built with Node 24). The NASA-derived data (16 MB) is
 - **26 curated sites**: Artemis III candidate regions, CLPS landers, a commercial lander, international
   missions, the six Apollo sites, and the permanently shadowed floor of Shackleton. Add any coordinate
   by typing it or double-clicking the map; its horizon is computed from LOLA in the browser.
+- **Drag and drop, like a video editor.** The site list and map are the bin, the timeline holds up to
+  three tracks, the panorama is the preview and the right-hand inspector shows one thing at a time
+  (Compare, Limits, What if). Drag a site from the list or the map onto the timeline to add a track,
+  or onto an existing track to replace it. The checkbox in the list does the same from the keyboard.
 - **Compare up to three sites** side by side, with GO / MARGINAL / NO-GO for each engineering and
   operations limit and the limit that decides the result named in a sentence.
 - **Mission limits** you can drag: battery survival, power-plus-comms hours per day, comms gap,
   antenna mask, Sun disc fraction, array rating and type. Every verdict updates as you drag.
 - **Timeline** with Sun, Earth and power-plus-comms windows per site, a power trace, playback and
   scrubbing.
-- **Schedule slip.** The same mission evaluated for landing 15 days early to 30 days late. Click a bar
-  to move the landing.
+- **Date shift** (under What if). The same mission evaluated for landing 15 days early to 30 days
+  late. Click a bar to move the landing.
 - **Best dates.** The top landing dates in the next 300 days for each site, and for all selected sites
   together.
 - **Science vs operations** scatter across every site.
@@ -66,7 +70,7 @@ Keyboard: `Space` play/pause, `←` `→` step one hour (`Shift` for six), `Home
 
 A 14-day mission landing 15 September 2027 at three south-pole sites. Connecting Ridge and Malapert
 Massif are GO. IM-2 Athena's site is NO-GO: 171 hours of darkness against a 50-hour battery. Slip the
-landing two weeks in the schedule-slip chart and Connecting Ridge turns NO-GO as well, because Earth's
+landing two weeks in the date-shift chart and Connecting Ridge turns NO-GO as well, because Earth's
 libration takes it below the ridge line.
 
 ## Data and accuracy
@@ -133,8 +137,8 @@ app/                      Vite + React + TypeScript
   src/data/               data contracts, dataset loader, browser DEM ray-cast, mock fallback
   src/state/              Zustand store, URL encoding
   src/hooks/              derived series, metrics and verdicts per site
-  src/components/         SiteMap, HorizonPanorama, Readouts, Timeline, Scorecards, Analysis,
-                          ConstraintsPanel, Terrain3D, Intro, Drawer, Header
+  src/components/         SiteMap, MoonGlobe, HorizonPanorama, Readouts, Timeline, Inspector,
+                          Scorecards, ConstraintsPanel, Analysis, Terrain3D, Intro, Drawer, Header
 pipeline/                 Python: Horizons queries, LOLA ray-cast, export, validation
 Context & Resources/      challenge brief, SPEC.md, AGENT_BRIEF.md
 PRODUCT.md                product context

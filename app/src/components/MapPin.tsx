@@ -6,6 +6,7 @@ import { clamp } from "../lib/astro";
 import type { Verdict } from "../lib/scenario";
 import { CATEGORY_LABEL, COLOR, FONT_UI, VERDICT_COLOR } from "../lib/theme";
 import { fmtLatLon } from "../lib/time";
+import { useSiteDrag } from "../hooks/useSiteDrag";
 
 export interface Tip {
   x: number;
@@ -21,10 +22,15 @@ export function Pin({
   onEnter: () => void; onLeave: () => void; onClick: () => void;
 }) {
   const color = verdict ? VERDICT_COLOR[verdict] : COLOR.text2;
+  const drag = useSiteDrag(site.id);
   return (
     <g
       className="pin" transform={`translate(${x} ${y})`} onPointerEnter={onEnter} onPointerLeave={onLeave}
-      onPointerDown={(e) => e.stopPropagation()}
+      onPointerDown={(e) => {
+        // keep the map from panning, and let the pin be dragged to the timeline
+        e.stopPropagation();
+        drag.onPointerDown(e);
+      }}
       onClick={onClick} role="button" tabIndex={0}
       aria-label={`${site.name}${verdict ? `, ${verdict}` : ""}`}
       onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onClick()}
