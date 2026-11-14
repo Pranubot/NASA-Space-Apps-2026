@@ -109,6 +109,7 @@ const LINES = [
 
 export default function Intro() {
   const close = useStore((s) => s.closeIntro);
+  const startTour = useStore((s) => s.startTour);
   const ds = useStore((s) => s.dataset);
   const tMs = useStore((s) => s.tMs);
   const selected = useStore((s) => s.selectedIds);
@@ -168,6 +169,7 @@ export default function Intro() {
             Open the planner <ArrowRight size={17} />
           </button>
           <span className="intro__hint">or press Enter</span>
+          <button type="button" className="btn btn--large" onClick={startTour}>Take the tour</button>
         </motion.div>
       </div>
       <p className="intro__credit">Imagery: NASA SVS, LROC · Positions: JPL Horizons · Terrain: LOLA</p>
