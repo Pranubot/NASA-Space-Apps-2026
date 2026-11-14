@@ -1,0 +1,135 @@
+{
+  "note": "Curated landing sites. Coordinates are planetocentric, east-positive, Mean Earth frame. approx=true means the coordinate is a region centre or a planning estimate rather than a surveyed/landed point. Science scores (1-5) are team-assigned for the trade view, not NASA values.",
+  "sites": [
+    {
+      "id": "connecting-ridge", "name": "Connecting Ridge", "lat": -89.45, "lon": -137.31,
+      "category": "artemis", "mission": "Artemis III candidate region",
+      "science": { "score": 5, "tags": ["PSR-adjacent", "ice", "high illumination"], "note": "Ridge between Shackleton and de Gerlache; long sunlit periods a short traverse from permanently shadowed ground." }
+    },
+    {
+      "id": "shackleton-rim", "name": "Shackleton Rim", "lat": -89.78, "lon": -155.73,
+      "category": "artemis", "mission": "Artemis III candidate region",
+      "science": { "score": 5, "tags": ["PSR-adjacent", "ice", "crater rim"], "note": "Rim of Shackleton, whose floor has not seen sunlight in billions of years." }
+    },
+    {
+      "id": "de-gerlache-rim", "name": "de Gerlache Rim", "lat": -88.67, "lon": -68.1, "approx": true,
+      "category": "artemis", "mission": "Artemis III candidate region",
+      "science": { "score": 4, "tags": ["PSR-adjacent", "crater rim", "ice"], "note": "Rim site with access to de Gerlache's cold traps." }
+    },
+    {
+      "id": "haworth", "name": "Haworth", "lat": -86.79, "lon": -21.2, "approx": true,
+      "category": "artemis", "mission": "Artemis III candidate region",
+      "science": { "score": 4, "tags": ["ancient crust", "PSR-adjacent", "volatiles"], "note": "Old highland terrain beside the Haworth cold trap." }
+    },
+    {
+      "id": "malapert-massif", "name": "Malapert Massif", "lat": -85.964, "lon": -2.319, "approx": true,
+      "category": "artemis", "mission": "Artemis III candidate region",
+      "science": { "score": 3, "tags": ["massif", "basin ejecta", "Earth view"], "note": "5 km-high massif facing Earth; possible South Pole-Aitken basin rim material." }
+    },
+    {
+      "id": "nobile-rim", "name": "Nobile Rim 1", "lat": -85.243, "lon": 36.8, "approx": true,
+      "category": "artemis", "mission": "Artemis III candidate region",
+      "science": { "score": 4, "tags": ["crater rim", "volatiles", "PSR-adjacent"], "note": "Western rim of Nobile, near the region studied for VIPER." }
+    },
+    {
+      "id": "faustini-rim", "name": "Faustini Rim A", "lat": -86.49, "lon": 80.68, "approx": true,
+      "category": "artemis", "mission": "Artemis III candidate (2022 list)",
+      "science": { "score": 4, "tags": ["PSR-adjacent", "ice", "crater rim"], "note": "Rim of Faustini, one of the coldest large craters at the pole." }
+    },
+    {
+      "id": "shackleton-floor", "name": "Shackleton Floor", "lat": -89.67, "lon": 129.78,
+      "category": "reference", "mission": "Permanently shadowed reference point",
+      "science": { "score": 5, "tags": ["PSR", "ice", "cold trap"], "note": "Crater floor about 4 km below the rim. Scientifically the prize, operationally the worst case: no Sun, no Earth." }
+    },
+    {
+      "id": "mons-mouton", "name": "Mons Mouton", "lat": -85.42088, "lon": 31.6218,
+      "category": "clps", "mission": "Griffin Mission 1 / VIPER site (Astrobotic)",
+      "science": { "score": 4, "tags": ["volatiles", "plateau", "rover traverse"], "note": "Flat-topped mountain chosen for the VIPER ice-prospecting traverse." }
+    },
+    {
+      "id": "im2-athena", "name": "IM-2 Athena", "lat": -84.7906, "lon": 29.1957,
+      "category": "clps", "mission": "Intuitive Machines IM-2, landed Mar 2025",
+      "science": { "score": 3, "tags": ["volatiles", "drill", "plateau"], "note": "PRIME-1 drill site on the Mons Mouton plateau, about 160 km from the pole." }
+    },
+    {
+      "id": "im1-odysseus", "name": "IM-1 Odysseus", "lat": -80.13, "lon": 1.44,
+      "category": "clps", "mission": "Intuitive Machines IM-1, landed Feb 2024",
+      "science": { "score": 2, "tags": ["highlands", "radio astronomy"], "note": "Malapert A. First US soft landing since Apollo 17." }
+    },
+    {
+      "id": "blue-ghost-m1", "name": "Blue Ghost M1", "lat": 18.562, "lon": 61.81,
+      "category": "clps", "mission": "Firefly Blue Ghost Mission 1, landed Mar 2025",
+      "science": { "score": 3, "tags": ["mare", "heat flow", "regolith"], "note": "Mare Crisium near Mons Latreille. Operated a full lunar day." }
+    },
+    {
+      "id": "im3-reiner-gamma", "name": "IM-3 Reiner Gamma", "lat": 7.585, "lon": -58.725, "approx": true,
+      "category": "clps", "mission": "Intuitive Machines IM-3 target",
+      "science": { "score": 4, "tags": ["magnetic anomaly", "lunar swirl"], "note": "Bright swirl over a crustal magnetic anomaly." }
+    },
+    {
+      "id": "ispace-frigoris", "name": "Mare Frigoris", "lat": 60.5, "lon": -4.6, "approx": true,
+      "category": "commercial", "mission": "ispace HAKUTO-R M2 Resilience target, Jun 2025",
+      "science": { "score": 2, "tags": ["mare", "high latitude"], "note": "Northern mare plain targeted by ispace's second commercial lander." }
+    },
+    {
+      "id": "chandrayaan-3", "name": "Chandrayaan-3", "lat": -69.373, "lon": 32.319,
+      "category": "international", "mission": "ISRO Shiv Shakti Point, landed Aug 2023",
+      "science": { "score": 3, "tags": ["highlands", "sulfur", "thermal probe"], "note": "First landing in the south polar region, between Manzinus C and Simpelius N." }
+    },
+    {
+      "id": "luna-25", "name": "Luna 25 target", "lat": -69.545, "lon": 43.544,
+      "category": "international", "mission": "Roscosmos, planned site north of Boguslawsky",
+      "science": { "score": 3, "tags": ["volatiles", "highlands"], "note": "Planned primary landing ellipse; the spacecraft was lost before landing in 2023." }
+    },
+    {
+      "id": "change-7", "name": "Chang'e 7 target", "lat": -88.8, "lon": 123.4, "approx": true,
+      "category": "international", "mission": "CNSA south-pole mission, planned",
+      "science": { "score": 5, "tags": ["PSR-adjacent", "ice", "hopper"], "note": "Planned near Shackleton's rim, with a hopper to enter shadowed ground." }
+    },
+    {
+      "id": "change-6", "name": "Chang'e 6", "lat": -41.638, "lon": -153.985,
+      "category": "international", "mission": "CNSA far-side sample return, Jun 2024",
+      "science": { "score": 5, "tags": ["far side", "SPA basin", "sample return"], "note": "Apollo basin inside South Pole-Aitken. Earth is never in the sky here." }
+    },
+    {
+      "id": "change-4", "name": "Chang'e 4", "lat": -45.444, "lon": 177.599,
+      "category": "international", "mission": "CNSA far-side lander, Jan 2019",
+      "science": { "score": 4, "tags": ["far side", "SPA basin", "relay required"], "note": "Von Karman crater. Works only through the Queqiao relay satellite." }
+    },
+    {
+      "id": "slim", "name": "SLIM", "lat": -13.316, "lon": 25.251,
+      "category": "international", "mission": "JAXA precision lander, Jan 2024",
+      "science": { "score": 3, "tags": ["crater ejecta", "olivine"], "note": "Shioli crater slope; landed within 100 m of its target." }
+    },
+    {
+      "id": "apollo-11", "name": "Apollo 11", "lat": 0.67416, "lon": 23.47314,
+      "category": "apollo", "mission": "Tranquility Base, Jul 1969",
+      "science": { "score": 3, "tags": ["mare", "basalt"], "note": "Mare Tranquillitatis. Earth sits high in the sky all the time." }
+    },
+    {
+      "id": "apollo-12", "name": "Apollo 12", "lat": -3.0128, "lon": -23.4219,
+      "category": "apollo", "mission": "Oceanus Procellarum, Nov 1969",
+      "science": { "score": 3, "tags": ["mare", "Surveyor 3"], "note": "Pinpoint landing beside the Surveyor 3 probe." }
+    },
+    {
+      "id": "apollo-14", "name": "Apollo 14", "lat": -3.64589, "lon": -17.47194,
+      "category": "apollo", "mission": "Fra Mauro, Feb 1971",
+      "science": { "score": 3, "tags": ["Imbrium ejecta", "highlands"], "note": "Fra Mauro formation, ejecta from the Imbrium impact." }
+    },
+    {
+      "id": "apollo-15", "name": "Apollo 15", "lat": 26.13239, "lon": 3.6333,
+      "category": "apollo", "mission": "Hadley-Apennine, Jul 1971",
+      "science": { "score": 4, "tags": ["rille", "mountains", "anorthosite"], "note": "Between Hadley Rille and the 4 km-high Apennine front." }
+    },
+    {
+      "id": "apollo-16", "name": "Apollo 16", "lat": -8.9734, "lon": 15.5011,
+      "category": "apollo", "mission": "Descartes Highlands, Apr 1972",
+      "science": { "score": 3, "tags": ["highlands", "breccia"], "note": "The only Apollo landing in the central highlands." }
+    },
+    {
+      "id": "apollo-17", "name": "Apollo 17", "lat": 20.1911, "lon": 30.7723,
+      "category": "apollo", "mission": "Taurus-Littrow, Dec 1972",
+      "science": { "score": 4, "tags": ["valley", "orange soil", "massifs"], "note": "Deep valley walled by 2 km massifs that raise the local horizon." }
+    }
+  ]
+}
