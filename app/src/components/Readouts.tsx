@@ -107,12 +107,12 @@ export function Readouts({ data, inst }: { data: SiteData; inst: Instant }) {
               <span className={`state ${inst.lit ? "state--sun" : "state--off"}`}>
                 {inst.sunFrac >= 0.999 ? "Full disc" : inst.sunFrac > 0.001 ? `${Math.round(inst.sunFrac * 100)}% of disc` : "Not visible"}
               </span>
-              <span className="ro__az num" title="Azimuth, clockwise from north">{inst.sunAz.toFixed(1)}° {cardinal(inst.sunAz)}</span>
+              <span className="ro__az num x-expert" title="Azimuth, clockwise from north">{inst.sunAz.toFixed(1)}° {cardinal(inst.sunAz)}</span>
             </h3>
             <dl className="kv">
               <Countdown nc={sunNext} tMs={inst.tMs} upLabel="Sunset in" downLabel="Sunrise in" />
-              <div><dt>Elevation</dt><dd className="num">{signed(inst.sunEl)}</dd></div>
-              <div title="Sun centre minus the terrain horizon at its azimuth"><dt>Clearance</dt><dd className="num">{signed(inst.sunClear)}</dd></div>
+              <div className="x-expert"><dt>Elevation</dt><dd className="num">{signed(inst.sunEl)}</dd></div>
+              <div className="x-expert" title="Sun centre minus the terrain horizon at its azimuth"><dt>Clearance</dt><dd className="num">{signed(inst.sunClear)}</dd></div>
             </dl>
           </div>
         </section>
@@ -125,12 +125,12 @@ export function Readouts({ data, inst }: { data: SiteData; inst: Instant }) {
               <span className={`state ${inst.earthVisible ? "state--earth" : "state--off"}`}>
                 {inst.earthVisible ? "Direct link" : "No direct link"}
               </span>
-              <span className="ro__az num" title="Azimuth, clockwise from north">{inst.earthAz.toFixed(1)}° {cardinal(inst.earthAz)}</span>
+              <span className="ro__az num x-expert" title="Azimuth, clockwise from north">{inst.earthAz.toFixed(1)}° {cardinal(inst.earthAz)}</span>
             </h3>
             <dl className="kv">
               <Countdown nc={earthNext} tMs={inst.tMs} upLabel="Earthset in" downLabel="Earthrise in" />
-              <div><dt>Elevation</dt><dd className="num">{signed(inst.earthEl)}</dd></div>
-              <div title="Earth centre minus the terrain horizon at its azimuth"><dt>Clearance</dt><dd className="num">{signed(inst.earthClear)}</dd></div>
+              <div className="x-expert"><dt>Elevation</dt><dd className="num">{signed(inst.earthEl)}</dd></div>
+              <div className="x-expert" title="Earth centre minus the terrain horizon at its azimuth"><dt>Clearance</dt><dd className="num">{signed(inst.earthClear)}</dd></div>
             </dl>
           </div>
         </section>

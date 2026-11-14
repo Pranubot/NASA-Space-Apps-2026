@@ -62,6 +62,8 @@ interface State extends ScenarioState {
   introOpen: boolean;
   hoverSiteId: string | null;
   toast: { id: number; text: string } | null;
+  /** Simple hides the expert numbers (angles, coordinates, extra metrics) so newcomers see the answer first */
+  simple: boolean;
 
   setDataset(d: Dataset): void;
   applyScenario(s: Partial<ScenarioState>): void;
@@ -87,6 +89,7 @@ interface State extends ScenarioState {
   setDrawer(d: Drawer): void;
   closeIntro(): void;
   setHoverSite(id: string | null): void;
+  setSimple(s: boolean): void;
   showToast(text: string): void;
 }
 
@@ -129,6 +132,7 @@ export const useStore = create<State>((set, get) => ({
   introOpen: true,
   hoverSiteId: null,
   toast: null,
+  simple: true,
 
   setDataset: (dataset) =>
     set((s) => {
@@ -223,6 +227,7 @@ export const useStore = create<State>((set, get) => ({
   setDrawer: (drawer) => set({ drawer }),
   closeIntro: () => set({ introOpen: false }),
   setHoverSite: (hoverSiteId) => set({ hoverSiteId }),
+  setSimple: (simple) => set({ simple }),
   showToast: (text) => {
     const id = ++toastId;
     set({ toast: { id, text } });

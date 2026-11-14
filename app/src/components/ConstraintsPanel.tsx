@@ -56,7 +56,7 @@ export function ConstraintsPanel({ embedded = false }: { embedded?: boolean }) {
         {DEFS.map((d) => (
           <label key={d.key} className="slider" title={d.hint}>
             <span className="slider__top">
-              <span className={`owner owner--${d.owner.toLowerCase()}`}>{d.owner}</span>
+              <span className={`owner owner--${d.owner.toLowerCase()} x-expert`}>{d.owner}</span>
               <span className="slider__label">{d.label}</span>
               <output className="num">{d.fmt(c[d.key])}</output>
             </span>
@@ -69,7 +69,7 @@ export function ConstraintsPanel({ embedded = false }: { embedded?: boolean }) {
         ))}
         <div className="slider">
           <span className="slider__top">
-            <span className="owner owner--eng">ENG</span>
+            <span className="owner owner--eng x-expert">ENG</span>
             <span className="slider__label">Array type</span>
           </span>
           <div className="seg seg--full" role="group" aria-label="Array type">

@@ -35,7 +35,7 @@ function TransportBar() {
           {playing ? <Pause size={16} /> : <Play size={16} />}
         </button>
       </div>
-      <label className="field field--inline">
+      <label className="field field--inline x-expert">
         <span>Speed</span>
         <select value={speed} onChange={(e) => setSpeed(Number(e.target.value))} aria-label="Playback speed">
           {SPEEDS.map((s) => (
@@ -47,7 +47,7 @@ function TransportBar() {
       </label>
       <div className="clock">
         <span className="clock__utc num">{fmtDateTime(tMs)}</span>
-        <span className="clock__met num">{fmtElapsed(tMs - startMs)}</span>
+        <span className="clock__met num x-expert">{fmtElapsed(tMs - startMs)}</span>
       </div>
     </div>
   );

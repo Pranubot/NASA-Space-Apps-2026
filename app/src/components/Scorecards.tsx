@@ -35,6 +35,8 @@ interface Row {
   lowerBetter?: boolean;
   render: (d: SiteData) => ReactNode;
   strong?: boolean;
+  /** hidden in Simple mode */
+  expert?: boolean;
 }
 
 const pct = (v: number) => `${Math.round(v)}%`;
@@ -48,8 +50,8 @@ const ROWS: Row[] = [
     score: (d) => d.metrics.firstBothH ?? Infinity, lowerBetter: true,
     render: (d) => (d.metrics.firstBothH === null ? "never" : d.metrics.firstBothH === 0 ? "at landing" : `after ${fmtDuration(d.metrics.firstBothH)}`),
   },
-  { label: "Mean Sun elevation", hint: "Average elevation while lit", render: (d) => (Number.isFinite(d.metrics.meanSunElLitDeg) ? `${d.metrics.meanSunElLitDeg.toFixed(1)}°` : "n/a") },
-  { label: "Energy", hint: "Array output over the mission", score: (d) => d.metrics.energyKWh, render: (d) => `${d.metrics.energyKWh.toFixed(0)} kWh` },
+  { label: "Mean Sun elevation", expert: true, hint: "Average elevation while lit", render: (d) => (Number.isFinite(d.metrics.meanSunElLitDeg) ? `${d.metrics.meanSunElLitDeg.toFixed(1)}°` : "n/a") },
+  { label: "Energy", expert: true, hint: "Array output over the mission", score: (d) => d.metrics.energyKWh, render: (d) => `${d.metrics.energyKWh.toFixed(0)} kWh` },
 ];
 
 function best(rows: SiteData[], r: Row): number {
@@ -125,11 +127,11 @@ export function Scorecards() {
             {rows[0]?.evaluation.checks.map((chk, ci) => (
               <tr key={chk.id} className="compare__check">
                 <th scope="row">
-                  <span className={`owner owner--${chk.owner.toLowerCase()}`} title={chk.owner === "ENG" ? "Engineering limit" : "Operations limit"}>
+                  <span className={`owner owner--${chk.owner.toLowerCase()} x-expert`} title={chk.owner === "ENG" ? "Engineering limit" : "Operations limit"}>
                     {chk.owner}
                   </span>
                   {chk.label}
-                  <span className="compare__limit num">{chk.limit}</span>
+                  <span className="compare__limit num x-expert">{chk.limit}</span>
                 </th>
                 {rows.map((d) => {
                   const c = d.evaluation.checks[ci];
@@ -147,7 +149,7 @@ export function Scorecards() {
             {ROWS.map((r) => {
               const b = best(rows, r);
               return (
-                <tr key={r.label} className={r.strong ? "is-strong" : ""}>
+                <tr key={r.label} className={`${r.strong ? "is-strong" : ""}${r.expert ? " x-expert" : ""}`}>
                   <th scope="row" title={r.hint}>{r.label}</th>
                   {rows.map((d, i) => (
                     <td key={d.site.id} className={`num${i === b ? " is-best" : ""}`}>
@@ -176,7 +178,7 @@ export function Scorecards() {
                 </td>
               ))}
             </tr>
-            <tr className="compare__links">
+            <tr className="compare__links x-expert">
               <th scope="row">Open in</th>
               {rows.map((d) => (
                 <td key={d.site.id}>
