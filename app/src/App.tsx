@@ -12,6 +12,7 @@ import { DragGhost, Inspector } from "./components/Inspector";
 import { SiteList } from "./components/SiteList";
 import { SiteMap } from "./components/SiteMap";
 import { Timeline } from "./components/Timeline";
+import { Tour } from "./components/Tour";
 
 const Intro = lazy(() => import("./components/Intro"));
 
@@ -58,6 +59,8 @@ function useShortcuts() {
       if (el && (el.tagName === "INPUT" || el.tagName === "SELECT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
       const s = useStore.getState();
       if (s.introOpen || e.metaKey || e.ctrlKey || e.altKey) return;
+      // during the tour the arrow keys move between steps; only play/pause stays
+      if (s.tourStep !== null && e.key !== " ") return;
       if (e.key === " ") {
         e.preventDefault();
         s.setPlaying(!s.playing);
@@ -83,6 +86,7 @@ export default function App() {
   const drawer = useStore((s) => s.drawer);
   const toast = useStore((s) => s.toast);
   const simple = useStore((s) => s.simple);
+  const touring = useStore((s) => s.tourStep !== null);
   usePlayback();
   useUrlSync(!!ds && !introOpen);
   useCustomHorizons();
@@ -130,6 +134,7 @@ export default function App() {
         )}
       </AnimatePresence>
       <DragGhost />
+      {ds && touring && <Tour />}
       <AnimatePresence>{drawer && <Drawer key="drawer" />}</AnimatePresence>
       <AnimatePresence>
         {toast && (

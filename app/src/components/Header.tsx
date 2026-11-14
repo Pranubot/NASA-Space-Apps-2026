@@ -1,6 +1,6 @@
 // Top bar: identity, scenario title, landing date and mission length, provenance, guide, share.
 
-import { BookOpen, Database, Share2 } from "lucide-react";
+import { BookOpen, Database, Play, Share2 } from "lucide-react";
 import { isoDate, parseIsoDate } from "../lib/time";
 import { scenarioOf } from "../hooks/useApp";
 import { DAY_OPTIONS, useStore } from "../state/store";
@@ -28,6 +28,7 @@ export function Header() {
   const showToast = useStore((s) => s.showToast);
   const simple = useStore((s) => s.simple);
   const setSimple = useStore((s) => s.setSimple);
+  const startTour = useStore((s) => s.startTour);
 
   const outOfRange = ds?.rangeMs ? startMs < ds.rangeMs[0] || startMs + days * 86_400_000 > ds.rangeMs[1] : true;
 
@@ -84,6 +85,9 @@ export function Header() {
         >
           <Database size={13} />
           {ds?.name === "mock" ? "Mock data" : outOfRange ? "Approximate: outside Horizons range" : "JPL Horizons + LOLA"}
+        </button>
+        <button type="button" className="btn btn--ghost" onClick={startTour} title="A two-minute guided tour of the planner">
+          <Play size={14} /> Tour
         </button>
         <button type="button" className="btn btn--ghost" onClick={() => setDrawer("guide")}>
           <BookOpen size={14} /> Guide

@@ -60,6 +60,9 @@ Requires Node 22 or newer (built with Node 24). The NASA-derived data (16 MB) is
 - **3D terrain** from LOLA with ray-marched shadows, an overview and a lander-eye camera.
 - **Share** copies a link that restores sites, dates, limits, time and custom coordinates.
 - **Export** the panorama as PNG and the windows as CSV.
+- **Guided tour.** The Tour button (also on the opening screen) walks through the default scenario in
+  eight captioned steps: the polar sky, the timeline, a GO site, a NO-GO site, a two-week slip, the 3D
+  terrain and the data sources. Arrow keys move between steps, `Esc` exits and restores your scenario.
 - **Guide and data sources** panel: why the Sun is low, why Earth wobbles, how verdicts work, and
   where every number comes from.
 

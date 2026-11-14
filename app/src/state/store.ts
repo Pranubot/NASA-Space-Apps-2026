@@ -64,6 +64,8 @@ interface State extends ScenarioState {
   introOpen: boolean;
   hoverSiteId: string | null;
   toast: { id: number; text: string } | null;
+  /** guided tour: the step on screen, or null when the tour is closed */
+  tourStep: number | null;
 
   setDataset(d: Dataset): void;
   applyScenario(s: Partial<ScenarioState>): void;
@@ -90,6 +92,10 @@ interface State extends ScenarioState {
   closeIntro(): void;
   setHoverSite(id: string | null): void;
   setSimple(s: boolean): void;
+  startTour(): void;
+  setTourStep(n: number): void;
+  /** closes the tour and puts back the scenario the viewer had before it */
+  endTour(): void;
   showToast(text: string): void;
 }
 
@@ -109,6 +115,8 @@ export function makeCustomSite(lat: number, lon: number, elevationM?: number): S
 }
 
 let toastId = 0;
+/** the viewer's own scenario, kept while the tour borrows the screen */
+let beforeTour: ScenarioState | null = null;
 
 export const useStore = create<State>((set, get) => ({
   dataset: null,
@@ -133,6 +141,7 @@ export const useStore = create<State>((set, get) => ({
   hoverSiteId: null,
   toast: null,
   simple: true,
+  tourStep: null,
 
   setDataset: (dataset) =>
     set((s) => {
@@ -228,6 +237,22 @@ export const useStore = create<State>((set, get) => ({
   closeIntro: () => set({ introOpen: false }),
   setHoverSite: (hoverSiteId) => set({ hoverSiteId }),
   setSimple: (simple) => set({ simple }),
+  startTour: () => {
+    const s = get();
+    if (s.tourStep === null) {
+      beforeTour = {
+        selectedIds: s.selectedIds, focusId: s.focusId, startMs: s.startMs, days: s.days, tMs: s.tMs,
+        constraints: s.constraints, customSites: s.customSites, title: s.title, view: s.view, simple: s.simple,
+      };
+    }
+    set({ tourStep: 0, introOpen: false, drawer: null });
+  },
+  setTourStep: (tourStep) => set({ tourStep }),
+  endTour: () => {
+    set({ tourStep: null, playing: false });
+    if (beforeTour) get().applyScenario(beforeTour);
+    beforeTour = null;
+  },
   showToast: (text) => {
     const id = ++toastId;
     set({ toast: { id, text } });
