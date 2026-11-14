@@ -57,8 +57,8 @@ function Guide() {
       <h3>Why does a small move matter?</h3>
       <p>
         With the Sun one degree up, a ridge 200 m high and 10 km away covers it completely. Shift the landing point a few kilometres, or the
-        date by a few days, and the power and communication windows can change from continuous to none. The schedule-slip chart shows this
-        for every landing date around your plan.
+        date by a few days, and the power and communication windows can change from continuous to none. The date-shift chart under
+        "What if" shows this for every landing date around your plan.
       </p>
       <h3>Reading the verdicts</h3>
       <p>

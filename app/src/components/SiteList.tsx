@@ -1,12 +1,13 @@
 // Searchable site list with category filters and a custom-coordinate form.
 
-import { Plus, Search, Trash2 } from "lucide-react";
+import { GripVertical, Plus, Search, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { customElevation } from "../data/dataset";
-import type { SiteCategory } from "../data/types";
+import type { Site, SiteCategory } from "../data/types";
 import { CATEGORY_LABEL } from "../lib/theme";
 import { fmtLatLon } from "../lib/time";
-import { useAllSummaries } from "../hooks/useSiteData";
+import { useAllSummaries, type SiteSummary } from "../hooks/useSiteData";
+import { useSiteDrag } from "../hooks/useSiteDrag";
 import { MAX_SELECTED, allSites, useStore } from "../state/store";
 import { VerdictIcon } from "./Scorecards";
 
@@ -55,16 +56,56 @@ function CustomForm() {
   );
 }
 
+function SiteRow({
+  site: s, summary: sum, selected, full, focused, hovered,
+}: { site: Site; summary?: SiteSummary; selected: boolean; full: boolean; focused: boolean; hovered: boolean }) {
+  const setHoverSite = useStore((st) => st.setHoverSite);
+  const toggle = useStore((st) => st.toggleSelect);
+  const focus = useStore((st) => st.focus);
+  const removeCustom = useStore((st) => st.removeCustomSite);
+  const drag = useSiteDrag(s.id);
+  return (
+    <li
+      className={`site${focused ? " is-focus" : ""}${hovered ? " is-hover" : ""}`}
+      onPointerEnter={() => setHoverSite(s.id)} onPointerLeave={() => setHoverSite(null)} onPointerDown={drag.onPointerDown}
+    >
+      <GripVertical size={13} className="site__grip" aria-hidden />
+      <input
+        type="checkbox" checked={selected} onChange={() => toggle(s.id)} aria-label={`Compare ${s.name}`}
+        disabled={!selected && full}
+      />
+      <button type="button" className="site__main" onClick={() => focus(s.id)}>
+        <span className="site__name">
+          {s.name}
+          {s.approx && <span className="tag" title="Region centre or planning estimate, not a surveyed point">approx.</span>}
+        </span>
+        <span className="site__meta">
+          {CATEGORY_LABEL[s.category]} · <span className="num">{fmtLatLon(s.lat, s.lon, 1)}</span>
+        </span>
+      </button>
+      {sum ? (
+        <span className="site__verdict" title={`${sum.evaluation.overall}: ${sum.evaluation.driver.reason}`}>
+          <VerdictIcon v={sum.evaluation.overall} size={15} />
+          <span className="sr-only">{sum.evaluation.overall}</span>
+        </span>
+      ) : (
+        <span className="site__verdict site__verdict--pending" title="Computing horizon" />
+      )}
+      {s.category === "custom" && (
+        <button type="button" className="iconbtn iconbtn--bare" onClick={() => removeCustom(s.id)} aria-label={`Delete ${s.name}`}>
+          <Trash2 size={13} />
+        </button>
+      )}
+    </li>
+  );
+}
+
 export function SiteList() {
   const ds = useStore((s) => s.dataset);
   const customSites = useStore((s) => s.customSites);
   const selected = useStore((s) => s.selectedIds);
   const focusId = useStore((s) => s.focusId);
   const hoverId = useStore((s) => s.hoverSiteId);
-  const setHoverSite = useStore((s) => s.setHoverSite);
-  const toggle = useStore((s) => s.toggleSelect);
-  const focus = useStore((s) => s.focus);
-  const removeCustom = useStore((s) => s.removeCustomSite);
   const summaries = useAllSummaries();
   const [query, setQuery] = useState("");
   const [cat, setCat] = useState<SiteCategory | "all">("all");
@@ -102,42 +143,15 @@ export function SiteList() {
           ))}
         </div>
       </div>
+      <p className="sitelist__hint">Drag a site onto the timeline to compare it.</p>
       <ul className="sitelist__items">
         {shown.map((s) => {
-          const sum = summaries.get(s.id);
           const isSel = selected.includes(s.id);
           return (
-            <li
-              key={s.id} className={`site${focusId === s.id ? " is-focus" : ""}${hoverId === s.id ? " is-hover" : ""}`}
-              onPointerEnter={() => setHoverSite(s.id)} onPointerLeave={() => setHoverSite(null)}
-            >
-              <input
-                type="checkbox" checked={isSel} onChange={() => toggle(s.id)} aria-label={`Compare ${s.name}`}
-                disabled={!isSel && selected.length >= MAX_SELECTED}
-              />
-              <button type="button" className="site__main" onClick={() => focus(s.id)}>
-                <span className="site__name">
-                  {s.name}
-                  {s.approx && <span className="tag" title="Region centre or planning estimate, not a surveyed point">approx.</span>}
-                </span>
-                <span className="site__meta">
-                  {CATEGORY_LABEL[s.category]} · <span className="num">{fmtLatLon(s.lat, s.lon, 1)}</span>
-                </span>
-              </button>
-              {sum ? (
-                <span className="site__verdict" title={`${sum.evaluation.overall}: ${sum.evaluation.driver.reason}`}>
-                  <VerdictIcon v={sum.evaluation.overall} size={15} />
-                  <span className="sr-only">{sum.evaluation.overall}</span>
-                </span>
-              ) : (
-                <span className="site__verdict site__verdict--pending" title="Computing horizon" />
-              )}
-              {s.category === "custom" && (
-                <button type="button" className="iconbtn iconbtn--bare" onClick={() => removeCustom(s.id)} aria-label={`Delete ${s.name}`}>
-                  <Trash2 size={13} />
-                </button>
-              )}
-            </li>
+            <SiteRow
+              key={s.id} site={s} summary={summaries.get(s.id)} selected={isSel} full={selected.length >= MAX_SELECTED}
+              focused={focusId === s.id} hovered={hoverId === s.id}
+            />
           );
         })}
         {shown.length === 0 && (

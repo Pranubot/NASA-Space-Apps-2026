@@ -15,6 +15,15 @@ export type HeroView = "panorama" | "terrain";
 export type MapRegion = "polar" | "global";
 export type AnalysisTab = "slip" | "dates" | "trade";
 export type Drawer = null | "guide" | "sources";
+export type InspectorTab = "compare" | "limits" | "whatif";
+
+/** A site being dragged from the bin, and what dropping it here would do. */
+export interface DragState {
+  id: string;
+  x: number;
+  y: number;
+  action: { kind: "add" | "replace" | "already" | "full"; targetId?: string; hint: string } | null;
+}
 
 /** Default story: a 14-day surface mission in the September 2027 window where the pole is lit and
  *  Earth is above the ridge lines. Slipping two weeks puts Earth below the horizon. */
@@ -47,6 +56,8 @@ interface State extends ScenarioState {
   speed: number;
   mapRegion: MapRegion;
   analysisTab: AnalysisTab;
+  inspectorTab: InspectorTab;
+  drag: DragState | null;
   drawer: Drawer;
   introOpen: boolean;
   hoverSiteId: string | null;
@@ -55,6 +66,9 @@ interface State extends ScenarioState {
   setDataset(d: Dataset): void;
   applyScenario(s: Partial<ScenarioState>): void;
   toggleSelect(id: string): void;
+  replaceTrack(oldId: string, newId: string): void;
+  setDrag(d: DragState | null): void;
+  setInspectorTab(t: InspectorTab): void;
   focus(id: string): void;
   setStart(ms: number, keepOffset?: boolean): void;
   setDays(d: number): void;
@@ -109,6 +123,8 @@ export const useStore = create<State>((set, get) => ({
   speed: 6,
   mapRegion: "polar",
   analysisTab: "slip",
+  inspectorTab: "compare",
+  drag: null,
   drawer: null,
   introOpen: true,
   hoverSiteId: null,
@@ -138,11 +154,20 @@ export const useStore = create<State>((set, get) => ({
         return { selectedIds, focusId: s.focusId === id ? selectedIds[0] : s.focusId };
       }
       if (s.selectedIds.length >= MAX_SELECTED) {
-        get().showToast(`Comparing ${MAX_SELECTED} sites at most. Remove one to add another.`);
+        get().showToast(`${MAX_SELECTED} tracks at most. Remove one, or drag onto a track to replace it.`);
         return s;
       }
       return { selectedIds: [...s.selectedIds, id], focusId: id };
     }),
+
+  replaceTrack: (oldId, newId) =>
+    set((s) => {
+      if (!s.selectedIds.includes(oldId) || s.selectedIds.includes(newId)) return s;
+      return { selectedIds: s.selectedIds.map((x) => (x === oldId ? newId : x)), focusId: newId };
+    }),
+
+  setDrag: (drag) => set({ drag }),
+  setInspectorTab: (inspectorTab) => set({ inspectorTab }),
 
   focus: (id) =>
     set((s) => {

@@ -5,12 +5,10 @@ import { HOUR } from "./lib/time";
 import { usePlayback, useUrlSync } from "./hooks/useApp";
 import { useStore } from "./state/store";
 import { decodeScenario } from "./state/url";
-import { Analysis } from "./components/Analysis";
-import { ConstraintsPanel } from "./components/ConstraintsPanel";
 import { Drawer } from "./components/Drawer";
 import { Header } from "./components/Header";
 import { HeroPanel } from "./components/HeroPanel";
-import { Scorecards } from "./components/Scorecards";
+import { DragGhost, Inspector } from "./components/Inspector";
 import { SiteList } from "./components/SiteList";
 import { SiteMap } from "./components/SiteMap";
 import { Timeline } from "./components/Timeline";
@@ -110,14 +108,10 @@ export default function App() {
               <SiteList />
             </div>
             <HeroPanel />
-            <div className="rail rail--right">
-              <Scorecards />
-              <ConstraintsPanel />
-            </div>
+            <Inspector />
           </main>
           <div className="dock">
             <Timeline />
-            <Analysis />
           </div>
         </div>
       ) : (
@@ -134,6 +128,7 @@ export default function App() {
           </Suspense>
         )}
       </AnimatePresence>
+      <DragGhost />
       <AnimatePresence>{drawer && <Drawer key="drawer" />}</AnimatePresence>
       <AnimatePresence>
         {toast && (

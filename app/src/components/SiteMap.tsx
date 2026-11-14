@@ -8,16 +8,15 @@ import { Minus, Plus, RotateCcw } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { PolarGrid, Site } from "../data/types";
 import { R_MOON_KM, clamp, deg, rad } from "../lib/astro";
-import type { Verdict } from "../lib/scenario";
-import { CATEGORY_LABEL, COLOR, FONT_MONO, FONT_UI, VERDICT_COLOR } from "../lib/theme";
-import { fmtLatLon } from "../lib/time";
+import { COLOR, FONT_MONO, FONT_UI } from "../lib/theme";
 import { useAllSummaries } from "../hooks/useSiteData";
 import { useSize } from "../hooks/useApp";
 import { allSites, useStore } from "../state/store";
+import { Pin, SiteTip, type Tip } from "./MapPin";
+import { MoonGlobe } from "./MoonGlobe";
 
 const R_M = R_MOON_KM * 1000;
 const POLAR_HALF_M = 2 * R_M * Math.tan(rad(10) / 2); // 80S ring radius, about 304 km
-const DATA = `${import.meta.env.BASE_URL}data/`;
 
 const VERT = `#version 300 es
 in vec2 aPos;
@@ -174,46 +173,9 @@ const mapXY = (lat: number, lon: number): [number, number] => {
   return [r * Math.sin(rad(lon)), r * Math.cos(rad(lon))];
 };
 
-interface Tip {
-  x: number;
-  y: number;
-  site: Site;
-  verdict?: Verdict;
-}
-
-function Pin({
-  x, y, site, verdict, selected, focused, hovered, showLabel, onEnter, onLeave, onClick,
-}: {
-  x: number; y: number; site: Site; verdict?: Verdict; selected: boolean; focused: boolean; hovered: boolean; showLabel: boolean;
-  onEnter: () => void; onLeave: () => void; onClick: () => void;
-}) {
-  const color = verdict ? VERDICT_COLOR[verdict] : COLOR.text2;
-  return (
-    <g
-      className="pin" transform={`translate(${x} ${y})`} onPointerEnter={onEnter} onPointerLeave={onLeave}
-      onPointerDown={(e) => e.stopPropagation()} onClick={onClick} role="button" tabIndex={0}
-      aria-label={`${site.name}${verdict ? `, ${verdict}` : ""}`}
-      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onClick()}
-    >
-      <circle r={12} fill="transparent" />
-      {focused && <circle className="pin__pulse" r={7} fill="none" stroke={color} strokeWidth={1.5} />}
-      <circle r={selected ? 5.5 : 4.2} fill={selected ? color : "#0b1120"} stroke={selected ? "#0b1120" : color} strokeWidth={selected ? 1.5 : 1.8} />
-      {((selected && showLabel) || hovered) && (
-        <text
-          x={9} y={4} fontFamily={FONT_UI} fontSize={11} fontWeight={650} fill={COLOR.text}
-          stroke="#070b14" strokeWidth={3} paintOrder="stroke" strokeLinejoin="round"
-        >
-          {site.name}
-        </text>
-      )}
-    </g>
-  );
-}
-
 export function SiteMap() {
   const [ref, size] = useSize<HTMLDivElement>();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const globeRef = useRef<HTMLCanvasElement>(null);
   const glRef = useRef<GlState | null>(null);
   const ds = useStore((s) => s.dataset);
   const customSites = useStore((s) => s.customSites);
@@ -233,7 +195,6 @@ export function SiteMap() {
   const [mode, setMode] = useState<"shadows" | "relief">("shadows");
   const [view, setView] = useState({ cx: 0, cy: 0, half: POLAR_HALF_M * 1.04 });
   const [tip, setTip] = useState<Tip | null>(null);
-  const [moonImg, setMoonImg] = useState<HTMLImageElement | null>(null);
   const drag = useRef<{ x: number; y: number; cx: number; cy: number; moved: boolean } | null>(null);
 
   const sites = useMemo(() => allSites({ dataset: ds, customSites }), [ds, customSites]);
@@ -251,13 +212,6 @@ export function SiteMap() {
       live = false;
     };
   }, [ds]);
-
-  useEffect(() => {
-    if (region !== "global" || moonImg) return;
-    const img = new Image();
-    img.onload = () => setMoonImg(img);
-    img.src = `${DATA}textures/moon_2k.jpg`;
-  }, [region, moonImg]);
 
   const w = size.w, h = size.h;
   const scale = (2 * view.half) / Math.max(1, Math.min(w, h)); // metres per css px
@@ -290,46 +244,6 @@ export function SiteMap() {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }, [region, grid, w, h, view, scale, sub, mode]);
 
-  // --- global map with terminator -------------------------------------------------------------
-  const gw = w, gh = Math.min(h, w / 2);
-  const gy0 = Math.max(0, (h - gh) / 2 - 22);
-  useEffect(() => {
-    const cv = globeRef.current;
-    if (region !== "global" || !cv || w === 0 || !sub) return;
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
-    cv.width = Math.round(gw * dpr);
-    cv.height = Math.round(gh * dpr);
-    const ctx = cv.getContext("2d")!;
-    if (moonImg) ctx.drawImage(moonImg, 0, 0, cv.width, cv.height);
-    else {
-      ctx.fillStyle = "#1a2030";
-      ctx.fillRect(0, 0, cv.width, cv.height);
-    }
-    // night side: n . s < 0, with a soft terminator
-    const nw = 180, nh = 90;
-    const night = new ImageData(nw, nh);
-    const sl = rad(sub.sLat), so = rad(sub.sLon);
-    const sv = [Math.cos(sl) * Math.cos(so), Math.cos(sl) * Math.sin(so), Math.sin(sl)];
-    for (let j = 0; j < nh; j++) {
-      const lat = rad(90 - ((j + 0.5) / nh) * 180);
-      for (let i = 0; i < nw; i++) {
-        const lon = rad(((i + 0.5) / nw) * 360 - 180);
-        const d = Math.cos(lat) * Math.cos(lon) * sv[0] + Math.cos(lat) * Math.sin(lon) * sv[1] + Math.sin(lat) * sv[2];
-        const k = (j * nw + i) * 4;
-        night.data[k] = 4;
-        night.data[k + 1] = 7;
-        night.data[k + 2] = 14;
-        night.data[k + 3] = Math.round(225 * clamp(0.5 - d * 6, 0, 1));
-      }
-    }
-    const off = document.createElement("canvas");
-    off.width = nw;
-    off.height = nh;
-    off.getContext("2d")!.putImageData(night, 0, 0);
-    ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(off, 0, 0, cv.width, cv.height);
-  }, [region, moonImg, w, gw, gh, sub]);
-
   // --- interaction ----------------------------------------------------------------------------
   const zoom = (factor: number, px = w / 2, py = h / 2) => {
     setView((v) => {
@@ -347,10 +261,6 @@ export function SiteMap() {
   };
 
   const latLonAt = (px: number, py: number): [number, number] | null => {
-    if (region === "global") {
-      if (py < gy0 || py > gy0 + gh) return null;
-      return [90 - ((py - gy0) / gh) * 180, (px / gw) * 360 - 180];
-    }
     const mx = view.cx + (px - w / 2) * scale, my = view.cy - (py - h / 2) * scale;
     const r = Math.hypot(mx, my);
     if (r > POLAR_HALF_M) return null;
@@ -358,7 +268,6 @@ export function SiteMap() {
   };
 
   const pinPos = (s: Site): [number, number] | null => {
-    if (region === "global") return [((s.lon + 180) / 360) * gw, gy0 + ((90 - s.lat) / 180) * gh];
     if (s.lat > -79.9) return null;
     const [mx, my] = mapXY(s.lat, s.lon);
     const x = sx(mx), y = sy(my);
@@ -388,8 +297,9 @@ export function SiteMap() {
           </button>
         </div>
       </header>
+      {region === "global" ? <MoonGlobe /> : null}
       <div
-        className={`map__view map__view--${region}`} ref={ref}
+        className="map__view map__view--polar" ref={ref} hidden={region !== "polar"}
         onWheel={(e) => region === "polar" && zoom(Math.pow(1.0018, e.deltaY), ...local(e))}
         onPointerDown={(e) => {
           if (region !== "polar") return;
@@ -413,7 +323,6 @@ export function SiteMap() {
         }}
       >
         {region === "polar" && <canvas ref={canvasRef} className="map__canvas" style={{ width: w, height: h }} />}
-        {region === "global" && <canvas ref={globeRef} className="map__canvas" style={{ width: gw, height: gh, top: gy0 }} />}
         {w > 0 && (
           <svg className="map__svg" width={w} height={h}>
             {region === "polar" && (
@@ -438,25 +347,6 @@ export function SiteMap() {
                     {gridState === "loading" ? "Loading LOLA terrain…" : "Terrain map unavailable in mock mode"}
                   </text>
                 )}
-              </g>
-            )}
-            {region === "global" && sub && (
-              <g>
-                <rect x={0.5} y={gy0 + 0.5} width={gw - 1} height={gh - 1} fill="none" stroke={COLOR.lineStrong} />
-                <line x1={0} x2={gw} y1={gy0 + gh / 2} y2={gy0 + gh / 2} stroke="#fff" strokeOpacity={0.1} />
-                <line x1={gw / 2} x2={gw / 2} y1={gy0} y2={gy0 + gh} stroke="#fff" strokeOpacity={0.1} />
-                {([["Sun overhead", sub.sLat, sub.sLon, COLOR.sun], ["Earth overhead", sub.eLat, sub.eLon, COLOR.earth]] as const).map(([label, lat, lon, color]) => {
-                  const x = ((((lon + 180) % 360) + 360) % 360 / 360) * gw, y = gy0 + ((90 - lat) / 180) * gh;
-                  return (
-                    <g key={label}>
-                      <circle cx={x} cy={y} r={5} fill="none" stroke={color} strokeWidth={1.6} />
-                      <circle cx={x} cy={y} r={1.6} fill={color} />
-                      <text x={clamp(x, 44, gw - 44)} y={y - 9} textAnchor="middle" fontFamily={FONT_UI} fontSize={10} fontWeight={600} fill={color} stroke="#070b14" strokeWidth={3} paintOrder="stroke">
-                        {label}
-                      </text>
-                    </g>
-                  );
-                })}
               </g>
             )}
             {sites.map((s) => {
@@ -501,20 +391,7 @@ export function SiteMap() {
             )}
           </svg>
         )}
-        {region === "global" && sub && (
-          <p className="map__caption" style={{ top: gy0 + gh + 8 }}>
-            Day and night now. Sun overhead at <span className="num">{fmtLatLon(sub.sLat, ((sub.sLon + 540) % 360) - 180, 1)}</span>, Earth overhead at{" "}
-            <span className="num">{fmtLatLon(sub.eLat, ((sub.eLon + 540) % 360) - 180, 1)}</span>. Earth's point drifts with libration.
-          </p>
-        )}
-        {tip && (
-          <div className="tip" style={{ left: clamp(tip.x + 14, 4, w - 208), top: clamp(tip.y + 12, 4, h - 92) }}>
-            <strong>{tip.site.name}</strong>
-            <span className="tip__dim">{tip.site.mission ?? CATEGORY_LABEL[tip.site.category]}</span>
-            <span className="num">{fmtLatLon(tip.site.lat, tip.site.lon)}{tip.site.approx ? " (approx.)" : ""}</span>
-            {tip.site.science && <span className="tip__dim">{tip.site.science.tags.join(" · ")}</span>}
-          </div>
-        )}
+        {tip && <SiteTip tip={tip} w={w} h={h} />}
         {region === "polar" && (
           <div className="map__tools">
             <div className="seg seg--small" role="group" aria-label="Map shading">

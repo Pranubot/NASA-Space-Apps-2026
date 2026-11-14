@@ -200,7 +200,7 @@ function BestDates() {
   return (
     <div className="dates">
       <p className="dates__lead">
-        Best landing dates for a {days}-day mission in the {SEARCH_DAYS} days after {fmtDate(startMs)}. Click one to re-plan.
+        {days}-day mission, next {SEARCH_DAYS} days from {fmtDate(startMs)}. Click a date to re-plan.
       </p>
       {result.per.length > 1 && row("All selected sites", result.joint, "joint")}
       {result.per.map((s) => row(s.name, s.best, s.id))}
@@ -293,7 +293,7 @@ function TradeScatter() {
 // ---------------------------------------------------------------------------------------------
 
 const TABS: { id: AnalysisTab; label: string }[] = [
-  { id: "slip", label: "Schedule slip" },
+  { id: "slip", label: "Date shift" },
   { id: "dates", label: "Best dates" },
   { id: "trade", label: "Science vs ops" },
 ];
@@ -315,9 +315,12 @@ export function Analysis() {
             </button>
           ))}
         </div>
-        {tab === "slip" && data && <span className="panel__sub">{data.site.name}, {days}-day mission</span>}
-        {tab === "trade" && <span className="panel__sub">Top right: science and operations agree</span>}
       </header>
+      <p className="analysis__lead">
+        {tab === "slip" && data && `What if the landing at ${data.site.name} moves? Each bar is the same ${days}-day mission landed on a different day. Click a bar to move the date.`}
+        {tab === "dates" && "The best landing dates ahead, per site and for all tracks together."}
+        {tab === "trade" && "Every site by science value and by hours it can operate. Top right is where science and operations agree."}
+      </p>
       <div className="analysis__body" role="tabpanel">
         {tab === "slip" && (data ? <SlipChart data={data} /> : <p className="panel__note">Computing…</p>)}
         {tab === "dates" && <BestDates />}

@@ -1,7 +1,7 @@
 // Transport controls and timeline strips. One shared time axis for every selected site:
 // Sun, Earth and Both strips, a power sparkline, and a cursor you can drag.
 
-import { Download, Earth as EarthIcon, Pause, Play, SkipBack, Sun as SunIcon, CircleCheck } from "lucide-react";
+import { Download, Earth as EarthIcon, Pause, Play, Plus, SkipBack, Sun as SunIcon, CircleCheck, X } from "lucide-react";
 import { memo, useMemo, useRef, useState } from "react";
 import { clamp } from "../lib/astro";
 import { VERDICT_COLOR, COLOR, FONT_MONO } from "../lib/theme";
@@ -10,11 +10,12 @@ import type { TimeWindow } from "../lib/visibility";
 import type { SiteData } from "../hooks/useSiteData";
 import { useSelectedData } from "../hooks/useSiteData";
 import { useSize } from "../hooks/useApp";
-import { SPEEDS, useStore } from "../state/store";
+import { TRACK_AXIS_H, TRACK_ROW_H } from "../hooks/useSiteDrag";
+import { MAX_SELECTED, SPEEDS, useStore } from "../state/store";
 
-const LABEL_W = 148;
-const ROW_H = 46;
-const AXIS_H = 20;
+const LABEL_W = 168;
+const ROW_H = TRACK_ROW_H;
+const AXIS_H = TRACK_AXIS_H;
 
 function TransportBar() {
   const playing = useStore((s) => s.playing);
@@ -127,15 +128,22 @@ export function Timeline() {
   const setTime = useStore((s) => s.setTime);
   const focus = useStore((s) => s.focus);
   const showToast = useStore((s) => s.showToast);
+  const toggle = useStore((s) => s.toggleSelect);
+  const trackCount = useStore((s) => s.selectedIds.length);
+  // what a site being dragged from the bin would do if dropped here
+  const dropKind = useStore((s) => s.drag?.action?.kind ?? null);
+  const dropTarget = useStore((s) => s.drag?.action?.targetId ?? null);
+  const dragActive = useStore((s) => s.drag !== null);
   const [tip, setTip] = useState<Tip | null>(null);
   const dragging = useRef(false);
+  const hasSlot = trackCount < MAX_SELECTED;
 
   const t0 = startMs, t1 = startMs + days * DAY;
   const w = size.w;
   const plotW = Math.max(10, w - LABEL_W - 8);
   const x = (t: number) => LABEL_W + ((t - t0) / (t1 - t0)) * plotW;
   const tAt = (px: number) => t0 + clamp((px - LABEL_W) / plotW, 0, 1) * (t1 - t0);
-  const height = AXIS_H + rows.length * ROW_H + 4;
+  const height = AXIS_H + (rows.length + (hasSlot ? 1 : 0)) * ROW_H + 4;
 
   const ticks = useMemo(() => {
     // keep labels at least ~54 px apart whatever the panel width
@@ -157,6 +165,11 @@ export function Timeline() {
 
   const onMove = (e: React.PointerEvent) => {
     const [mx, my] = local(e);
+    // a site is being dragged over the timeline: no scrubbing, no hover card
+    if (useStore.getState().drag) {
+      setTip(null);
+      return;
+    }
     if (dragging.current) setTime(tAt(mx));
     const row = Math.floor((my - AXIS_H) / ROW_H);
     const d = rows[row];
@@ -208,7 +221,7 @@ export function Timeline() {
           <Download size={15} />
         </button>
       </header>
-      <div className="timeline__body" ref={ref}>
+      <div className={`timeline__body${dragActive ? " is-droppable" : ""}`} ref={ref} data-drop="timeline">
         {w > 0 && (
           <svg
             width={w} height={height} className="timeline__svg"
@@ -242,19 +255,37 @@ export function Timeline() {
         )}
         <div className="timeline__labels" style={{ top: AXIS_H }}>
           {rows.map((d) => (
-            <button
-              key={d.site.id} type="button" style={{ height: ROW_H }}
-              className={`tl-label${d.site.id === focusId ? " is-focus" : ""}`} onClick={() => focus(d.site.id)}
-              title={`Show ${d.site.name} in the main view`}
-            >
-              <span className="tl-label__name">
-                <i style={{ background: VERDICT_COLOR[d.evaluation.overall] }} />
-                {d.site.name}
-              </span>
-              <span className="tl-label__sub num">{Math.round(d.metrics.bothPct)}% power + comms</span>
-            </button>
+            <div key={d.site.id} className={`tl-track${d.site.id === focusId ? " is-focus" : ""}`} style={{ height: ROW_H }}>
+              <button type="button" className="tl-label" onClick={() => focus(d.site.id)} title={`Show ${d.site.name} in the main view`}>
+                <span className="tl-label__name">
+                  <i style={{ background: VERDICT_COLOR[d.evaluation.overall] }} />
+                  {d.site.name}
+                </span>
+                <span className="tl-label__sub num">{Math.round(d.metrics.bothPct)}% power + comms</span>
+              </button>
+              {rows.length > 1 && (
+                <button type="button" className="tl-remove" onClick={() => toggle(d.site.id)} aria-label={`Remove the ${d.site.name} track`} title="Remove track">
+                  <X size={13} />
+                </button>
+              )}
+            </div>
           ))}
         </div>
+        {rows.map((d, r) =>
+          dropKind === "replace" && dropTarget === d.site.id ? (
+            <div key={d.site.id} className="tl-drop tl-drop--replace" style={{ top: AXIS_H + r * ROW_H, height: ROW_H - 4 }}>
+              Replace {d.site.name}
+            </div>
+          ) : null,
+        )}
+        {hasSlot && (
+          <div
+            className={`tl-slot${dropKind === "add" ? " is-target" : ""}`}
+            style={{ top: AXIS_H + rows.length * ROW_H + 2, height: ROW_H - 8 }}
+          >
+            <Plus size={13} /> {dropKind === "add" ? "Drop to add this site as a track" : "Drag a site here from the list or the map to compare it"}
+          </div>
+        )}
         {tip && (
           <div className="tip" style={{ left: clamp(tip.x + 12, LABEL_W, w - 250), top: Math.max(0, tip.y - 78) }}>
             <strong>{tip.site}</strong>
