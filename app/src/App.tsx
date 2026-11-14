@@ -82,6 +82,7 @@ export default function App() {
   const introOpen = useStore((s) => s.introOpen);
   const drawer = useStore((s) => s.drawer);
   const toast = useStore((s) => s.toast);
+  const simple = useStore((s) => s.simple);
   usePlayback();
   useUrlSync(!!ds && !introOpen);
   useCustomHorizons();
@@ -100,7 +101,7 @@ export default function App() {
   return (
     <>
       {ds ? (
-        <div className="app" inert={introOpen}>
+        <div className={`app${simple ? " is-simple" : ""}`} inert={introOpen}>
           <Header />
           <main className="main">
             <div className="rail rail--left">

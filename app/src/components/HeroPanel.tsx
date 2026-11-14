@@ -3,14 +3,15 @@
 
 import { Box, Mountain } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useMemo } from "react";
+import { slipAnalysis, type Check } from "../lib/scenario";
 import { CATEGORY_LABEL } from "../lib/theme";
-import { fmtLatLon } from "../lib/time";
-import { useInstant, useSelectedData, useSiteData } from "../hooks/useSiteData";
-import { useStore } from "../state/store";
+import { fmtDayMonth, fmtLatLon } from "../lib/time";
+import { useInstant, useSelectedData, useSiteData, type SiteData } from "../hooks/useSiteData";
+import { SLIP_AFTER_DAYS, useStore } from "../state/store";
 import { HorizonPanorama } from "./HorizonPanorama";
 import { Readouts } from "./Readouts";
-import { VerdictIcon } from "./Scorecards";
+import { VerdictChip, VerdictIcon } from "./Scorecards";
 
 const Terrain3D = lazy(() => import("./Terrain3D"));
 
@@ -41,6 +42,7 @@ export function HeroPanel() {
         </div>
         {site && (
           <span className="hero__meta">
+            <span className="x-expert">
             <span className="num">{fmtLatLon(site.lat, site.lon)}</span>
             {site.elevationM !== undefined && (
               <>
@@ -48,7 +50,9 @@ export function HeroPanel() {
               </>
             )}
             {site.approx && <span className="tag" title="Region centre or planning estimate, not a surveyed point">approx.</span>}
-            {" "}· {site.mission ?? CATEGORY_LABEL[site.category]}
+            {" "}·{" "}
+            </span>
+            {site.mission ?? CATEGORY_LABEL[site.category]}
           </span>
         )}
         <div className="seg" role="group" aria-label="View">
@@ -60,6 +64,7 @@ export function HeroPanel() {
           </button>
         </div>
       </header>
+      {data && <AnswerCard data={data} />}
       <div className="hero__stage">
         {data && inst ? (
           <AnimatePresence mode="wait" initial={false}>
@@ -85,6 +90,53 @@ export function HeroPanel() {
         )}
       </div>
       {data && inst && <Readouts data={data} inst={inst} />}
+    </section>
+  );
+}
+
+const HEADLINE = { GO: "Good to land here.", MARGINAL: "Close call.", "NO-GO": "Not safe to land here." };
+const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? "" : "s"}`;
+
+/** The answer before the evidence: verdict, why, and the three numbers the planner asked for. */
+function AnswerCard({ data }: { data: SiteData }) {
+  const c = useStore((s) => s.constraints);
+  const startMs = useStore((s) => s.startMs);
+  const days = useStore((s) => s.days);
+  const { site, metrics: m, evaluation: ev } = data;
+  const check = (id: Check["id"]) => ev.checks.find((k) => k.id === id)!;
+  // the first later landing day whose verdict differs from today's plan
+  const change = useMemo(
+    () => slipAnalysis(data.geom, data.flags, c, startMs, days, 1, SLIP_AFTER_DAYS).find((p) => p.complete && p.verdict !== ev.overall),
+    [data.geom, data.flags, c, startMs, days, ev.overall],
+  );
+
+  return (
+    <section className="answer" aria-label={`Verdict for ${site.name}`}>
+      <p className="answer__head">
+        <VerdictChip v={ev.overall} />
+        <strong>{site.name}:</strong> {HEADLINE[ev.overall]} {ev.overall === "GO" ? "Every mission limit is met." : ev.driver.reason}
+      </p>
+      <dl className="answer__facts">
+        <div>
+          <dt>Can work and talk home</dt>
+          <dd><VerdictIcon v={check("both").verdict} size={13} /><span className="num">{m.bothHoursPerDay.toFixed(1)} h</span> a day</dd>
+          <dd className="answer__sub">needs {c.minBothHoursPerDay} h</dd>
+        </div>
+        <div>
+          <dt>Longest night</dt>
+          <dd><VerdictIcon v={check("dark").verdict} size={13} /><span className="num">{Math.round(m.longestDarkH)} h</span></dd>
+          <dd className="answer__sub">battery lasts {c.maxDarkH} h</dd>
+        </div>
+        <div>
+          <dt>If the landing slips</dt>
+          {change ? (
+            <dd><VerdictIcon v={change.verdict} size={13} />{change.verdict} after {plural(change.offsetDays, "day")}</dd>
+          ) : (
+            <dd><VerdictIcon v={ev.overall} size={13} />Still {ev.overall}</dd>
+          )}
+          <dd className="answer__sub">{change ? `landing ${fmtDayMonth(change.startMs)}` : `for at least ${SLIP_AFTER_DAYS} days`}</dd>
+        </div>
+      </dl>
     </section>
   );
 }

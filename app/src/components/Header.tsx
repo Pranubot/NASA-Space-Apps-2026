@@ -26,6 +26,8 @@ export function Header() {
   const setDays = useStore((s) => s.setDays);
   const setDrawer = useStore((s) => s.setDrawer);
   const showToast = useStore((s) => s.showToast);
+  const simple = useStore((s) => s.simple);
+  const setSimple = useStore((s) => s.setSimple);
 
   const outOfRange = ds?.rangeMs ? startMs < ds.rangeMs[0] || startMs + days * 86_400_000 > ds.rangeMs[1] : true;
 
@@ -72,6 +74,10 @@ export function Header() {
         </label>
       </div>
       <div className="topbar__actions">
+        <div className="seg" role="group" aria-label="Detail level" title="Simple shows the answer; Expert adds every angle, coordinate and metric">
+          <button type="button" className={simple ? "is-on" : ""} aria-pressed={simple} onClick={() => setSimple(true)}>Simple</button>
+          <button type="button" className={simple ? "" : "is-on"} aria-pressed={!simple} onClick={() => setSimple(false)}>Expert</button>
+        </div>
         <button
           type="button" className={`badge${ds?.name === "mock" || outOfRange ? " badge--warn" : ""}`} onClick={() => setDrawer("sources")}
           title="Where every number comes from"

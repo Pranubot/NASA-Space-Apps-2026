@@ -2214,3 +2214,65 @@ kbd {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ------------------------------------------------------------------ simple mode + answer card */
+
+/* Simple mode: anything tagged x-expert (angles, coordinates, owner tags, extra metrics) is hidden */
+.is-simple .x-expert {
+  display: none !important;
+}
+
+.answer {
+  flex: none;
+  padding: 10px 14px 11px;
+  border-bottom: 1px solid var(--line);
+}
+.answer__head {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+.answer__head .verdict {
+  margin-right: 8px;
+  vertical-align: 1px;
+}
+.answer__head strong {
+  color: var(--text);
+}
+.answer__facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 9px 0 0;
+}
+.answer__facts > div {
+  min-width: 0;
+  padding: 0 12px;
+}
+.answer__facts > div:first-child {
+  padding-left: 0;
+}
+.answer__facts > div + div {
+  border-left: 1px solid var(--line);
+}
+.answer__facts dt {
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 600;
+}
+.answer__facts dd {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 2px 0 0;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.answer__facts dd .num {
+  font-size: 15px;
+}
+.answer__facts .answer__sub {
+  color: var(--text-3);
+  font-size: 11px;
+}
