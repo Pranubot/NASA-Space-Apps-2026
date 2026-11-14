@@ -1,0 +1,14 @@
+# Impeccable design skill (local state/config)
+.impeccable/
+.codex/hooks.json
+.cursor/hooks.json
+
+# Dependencies and build output
+node_modules/
+app/dist/
+__pycache__/
+.pytest_cache/
+
+# Raw NASA downloads (about 700 MB). Re-create with: python pipeline/fetch_data.py
+pipeline/raw/
+pipeline/raw_earth/

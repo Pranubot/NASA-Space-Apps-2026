@@ -1,0 +1,126 @@
+{
+ "method": "App geometry from Horizons sub-points vs direct Horizons coord@301 apparent az/el, hourly over 72 h",
+ "startUtc": "2027-06-01",
+ "cases": [
+  {
+   "id": "apollo-11",
+   "name": "Apollo 11",
+   "lat": 0.67416,
+   "lon": 23.47314,
+   "samples": 73,
+   "sunElMaxErrDeg": 0.0007,
+   "sunAzMaxErrDeg": 0.0002,
+   "earthElMaxErrDeg": 0.006,
+   "earthAzMaxErrDeg": 0.0016,
+   "example": {
+    "utc": "2027-06-01 00:00",
+    "horizonsSun": [
+     275.918,
+     -69.959
+    ],
+    "appSun": [
+     275.918,
+     -69.959
+    ],
+    "horizonsEarth": [
+     257.08,
+     58.786
+    ],
+    "appEarth": [
+     257.078,
+     58.789
+    ]
+   }
+  },
+  {
+   "id": "connecting-ridge",
+   "name": "Connecting Ridge",
+   "lat": -89.45,
+   "lon": -137.31,
+   "samples": 73,
+   "sunElMaxErrDeg": 0.0005,
+   "sunAzMaxErrDeg": 0.0007,
+   "earthElMaxErrDeg": 0.0008,
+   "earthAzMaxErrDeg": 0.0062,
+   "example": {
+    "utc": "2027-06-01 00:00",
+    "horizonsSun": [
+     0.719,
+     -0.842
+    ],
+    "appSun": [
+     0.719,
+     -0.842
+    ],
+    "horizonsEarth": [
+     130.43,
+     5.431
+    ],
+    "appEarth": [
+     130.434,
+     5.431
+    ]
+   }
+  },
+  {
+   "id": "malapert-massif",
+   "name": "Malapert Massif",
+   "lat": -85.964,
+   "lon": -2.319,
+   "samples": 73,
+   "sunElMaxErrDeg": 0.0005,
+   "sunAzMaxErrDeg": 0.0007,
+   "earthElMaxErrDeg": 0.0008,
+   "earthAzMaxErrDeg": 0.006,
+   "example": {
+    "utc": "2027-06-01 00:00",
+    "horizonsSun": [
+     225.869,
+     -4.206
+    ],
+    "appSun": [
+     225.869,
+     -4.206
+    ],
+    "horizonsEarth": [
+     355.35,
+     9.813
+    ],
+    "appEarth": [
+     355.354,
+     9.814
+    ]
+   }
+  },
+  {
+   "id": "change-4",
+   "name": "Chang'e 4",
+   "lat": -45.444,
+   "lon": 177.599,
+   "samples": 73,
+   "sunElMaxErrDeg": 0.0006,
+   "sunAzMaxErrDeg": 0.0006,
+   "earthElMaxErrDeg": 0.0006,
+   "earthAzMaxErrDeg": 0.006,
+   "example": {
+    "utc": "2027-06-01 00:00",
+    "horizonsSun": [
+     54.38,
+     28.138
+    ],
+    "appSun": [
+     54.38,
+     28.138
+    ],
+    "horizonsEarth": [
+     174.263,
+     -38.554
+    ],
+    "appEarth": [
+     174.267,
+     -38.554
+    ]
+   }
+  }
+ ]
+}
