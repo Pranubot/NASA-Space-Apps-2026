@@ -3,20 +3,22 @@
    Sun amber, Earth blue, Both green, NO-GO red. Colour never carries a state on its own. */
 
 :root {
-  --bg: #070b14;
-  --panel: #0b1120;
-  --panel-2: #101829;
-  --panel-3: #16203a;
-  --line: #1c2740;
-  --line-strong: #2c3a5c;
-  --text: #e6ebf5;
-  --text-2: #a3aec6;
-  --text-3: #7c89a6;
+  --bg: #000000;
+  --panel: #000000;
+  --panel-2: #0d0d0d;
+  --panel-3: #171717;
+  --line: #1a1a1a;
+  --line-strong: #2b2b2b;
+  --hover-line: #3d3d3d;
+  --overlay: rgba(0, 0, 0, 0.82);
+  --text: #ededed;
+  --text-2: #a3a3a3;
+  --text-3: #7a7a7a;
 
   --sun: #f5b942;
   --earth: #4fa3ff;
   --both: #3ddc97;
-  --dark: #3a4458;
+  --dark: #333333;
   --nogo: #ff5d5d;
   --marginal: #ff9a4d;
 
@@ -208,7 +210,7 @@ a:hover {
 }
 .inspector.is-target::after {
   border-color: var(--text);
-  background: rgba(230, 235, 245, 0.05);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 /* dragging a site from the bin */
@@ -227,7 +229,7 @@ body.is-site-dragging * {
   padding: 7px 11px;
   border-radius: 7px;
   background: var(--text);
-  color: #0a0f1c;
+  color: #000;
   box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.85);
   pointer-events: none;
   white-space: nowrap;
@@ -238,7 +240,7 @@ body.is-site-dragging * {
 }
 .ghost span {
   font-size: 11px;
-  color: #3b4660;
+  color: #4a4a4a;
 }
 .ghost.is-ok span {
   color: #0d6b45;
@@ -299,7 +301,7 @@ body.is-site-dragging * {
   height: 30px;
   padding: 0 12px;
   border-radius: var(--r);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   background: var(--panel-2);
   font-weight: 600;
   font-size: 12.5px;
@@ -308,7 +310,7 @@ body.is-site-dragging * {
 }
 .btn:hover {
   background: var(--panel-3);
-  border-color: #3d4f7c;
+  border-color: var(--hover-line);
 }
 .btn:active {
   transform: translateY(1px);
@@ -316,7 +318,7 @@ body.is-site-dragging * {
 .btn--primary {
   background: var(--text);
   border-color: var(--text);
-  color: #0a0f1c;
+  color: #000;
 }
 .btn--primary:hover {
   background: #fff;
@@ -324,6 +326,13 @@ body.is-site-dragging * {
 }
 .btn--ghost {
   background: transparent;
+  border-color: transparent;
+  color: var(--text-2);
+}
+.btn--ghost:hover {
+  background: var(--panel-2);
+  border-color: transparent;
+  color: var(--text);
 }
 .btn--large {
   height: 44px;
@@ -376,7 +385,7 @@ body.is-site-dragging * {
   height: 28px;
   border-radius: 5px;
   background: var(--text);
-  color: #0a0f1c;
+  color: #000;
   transition: background var(--fast) var(--ease), transform var(--fast) var(--ease);
 }
 .playbtn:hover {
@@ -392,7 +401,6 @@ body.is-site-dragging * {
   gap: 2px;
   border-radius: var(--r);
   background: var(--panel-2);
-  border: 1px solid var(--line);
 }
 .seg button {
   display: inline-flex;
@@ -413,7 +421,6 @@ body.is-site-dragging * {
 .seg button.is-on {
   background: var(--panel-3);
   color: var(--text);
-  box-shadow: inset 0 0 0 1px var(--line-strong);
 }
 .seg--small button {
   height: 22px;
@@ -498,7 +505,7 @@ body.is-site-dragging * {
 }
 .field input:hover,
 .field select:hover {
-  border-color: #3d4f7c;
+  border-color: var(--hover-line);
 }
 .field input::placeholder,
 .search input::placeholder {
@@ -593,7 +600,7 @@ input[type="checkbox"] {
   gap: 2px;
   padding: 8px 10px;
   border-radius: var(--r);
-  background: #121b30;
+  background: #111111;
   border: 1px solid var(--line-strong);
   box-shadow: 0 10px 28px -8px rgba(0, 0, 0, 0.7);
   font-size: 11.5px;
@@ -686,23 +693,23 @@ input[type="checkbox"] {
   gap: 6px;
   height: 26px;
   padding: 0 9px;
-  border-radius: 13px;
-  border: 1px solid rgba(61, 220, 151, 0.4);
-  color: var(--both);
+  border-radius: var(--r);
+  color: var(--text-2);
   font-size: 11.5px;
   font-weight: 600;
   white-space: nowrap;
-  transition: background var(--fast) var(--ease);
+  transition: background var(--fast) var(--ease), color var(--fast) var(--ease);
+}
+.badge svg {
+  color: var(--both);
 }
 .badge:hover {
-  background: rgba(61, 220, 151, 0.1);
+  background: var(--panel-2);
+  color: var(--text);
 }
-.badge--warn {
-  border-color: rgba(255, 154, 77, 0.5);
+.badge--warn,
+.badge--warn svg {
   color: var(--marginal);
-}
-.badge--warn:hover {
-  background: rgba(255, 154, 77, 0.1);
 }
 
 /* ------------------------------------------------------------------ map */
@@ -714,7 +721,7 @@ input[type="checkbox"] {
   position: relative;
   aspect-ratio: 1 / 0.9;
   max-height: 40vh;
-  background: #05080f;
+  background: #000;
   overflow: hidden;
   touch-action: none;
   cursor: grab;
@@ -758,7 +765,7 @@ input[type="checkbox"] {
   display: none;
 }
 .map__view--globe {
-  background: radial-gradient(circle at 50% 45%, #0a1020 0%, #04060c 70%);
+  background: #000;
 }
 .map__status {
   position: absolute;
@@ -782,7 +789,7 @@ input[type="checkbox"] {
 }
 .map__tools > * {
   pointer-events: auto;
-  background: rgba(11, 17, 32, 0.86);
+  background: var(--overlay);
   border-radius: var(--r);
 }
 
@@ -795,6 +802,7 @@ input[type="checkbox"] {
   padding: 10px 12px 6px;
   display: grid;
   gap: 8px;
+  grid-template-columns: minmax(0, 1fr);
 }
 .search {
   display: flex;
@@ -820,6 +828,7 @@ input[type="checkbox"] {
 }
 .chips {
   display: flex;
+  min-width: 0;
   gap: 4px;
   overflow-x: auto;
   scrollbar-width: none;
@@ -845,7 +854,7 @@ input[type="checkbox"] {
 .chips button.is-on {
   background: var(--text);
   border-color: var(--text);
-  color: #0a0f1c;
+  color: #000;
 }
 .sitelist__top {
   display: flex;
@@ -992,7 +1001,7 @@ input[type="checkbox"] {
   position: relative;
   flex: 1 1 0;
   min-height: 0;
-  background: #05080f;
+  background: #000;
 }
 .hero__view {
   position: absolute;
@@ -1040,7 +1049,7 @@ input[type="checkbox"] {
 .pano__tools .seg,
 .pano__tools .iconrow,
 .t3d__tools > * {
-  background: rgba(11, 17, 32, 0.82);
+  background: var(--overlay);
   border-radius: var(--r);
 }
 .pano__tools .iconrow {
@@ -1052,7 +1061,7 @@ input[type="checkbox"] {
   font-size: 11px;
   padding: 3px 7px;
   border-radius: 4px;
-  background: rgba(11, 17, 32, 0.82);
+  background: var(--overlay);
 }
 
 .t3d {
@@ -1175,7 +1184,7 @@ input[type="checkbox"] {
 }
 .state--off {
   color: var(--text-2);
-  background: rgba(58, 68, 88, 0.55);
+  background: rgba(255, 255, 255, 0.08);
 }
 .ro__az {
   margin-left: auto;
@@ -1667,11 +1676,11 @@ input[type="range"]:hover::-webkit-slider-thumb {
 .tl-slot.is-target {
   border-color: var(--text);
   color: var(--text);
-  background: rgba(230, 235, 245, 0.07);
+  background: rgba(255, 255, 255, 0.07);
 }
 .tl-drop--replace {
   border: 1.5px solid var(--text);
-  background: rgba(11, 17, 32, 0.82);
+  background: var(--overlay);
   color: var(--text);
   font-weight: 600;
 }
@@ -1693,9 +1702,13 @@ input[type="range"]:hover::-webkit-slider-thumb {
   border-radius: 50%;
 }
 .tl-label__sub {
+  max-width: 100%;
   color: var(--text-3);
   font-size: 10.5px;
   padding-left: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ------------------------------------------------------------------ analysis */
@@ -1787,7 +1800,7 @@ input[type="range"]:hover::-webkit-slider-thumb {
 }
 .datechip:hover {
   background: var(--panel-3);
-  border-color: #3d4f7c;
+  border-color: var(--hover-line);
 }
 .datechip__sub {
   color: var(--text-3);
@@ -1800,7 +1813,7 @@ input[type="range"]:hover::-webkit-slider-thumb {
   position: fixed;
   inset: 0;
   z-index: 40;
-  background: rgba(3, 5, 10, 0.55);
+  background: rgba(0, 0, 0, 0.6);
 }
 .drawer {
   position: fixed;
@@ -1957,7 +1970,7 @@ kbd {
   padding: 9px 14px;
   border-radius: 8px;
   background: var(--text);
-  color: #0a0f1c;
+  color: #000;
   font-weight: 600;
   font-size: 12.5px;
   box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.8);
@@ -1985,7 +1998,7 @@ kbd {
   position: fixed;
   inset: 0;
   z-index: 50;
-  background: #020409;
+  background: #000;
   overflow: hidden;
 }
 .intro__canvas {
@@ -1996,7 +2009,7 @@ kbd {
 .intro__shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, #020409 0%, #020409 24vw, rgba(2, 4, 9, 0.6) 40vw, rgba(2, 4, 9, 0) 62vw);
+  background: linear-gradient(90deg, #000 0%, #000 24vw, rgba(0, 0, 0, 0.6) 40vw, rgba(0, 0, 0, 0) 62vw);
   pointer-events: none;
 }
 .intro__copy {
@@ -2025,7 +2038,7 @@ kbd {
 .intro__lines p {
   font-size: clamp(15px, 1.25vw, 18.5px);
   line-height: 1.5;
-  color: #c3cde2;
+  color: #c7c7c7;
   max-width: 46ch;
   text-wrap: pretty;
 }
@@ -2096,6 +2109,10 @@ kbd {
   .topbar__dates,
   .topbar__actions {
     flex-wrap: wrap;
+  }
+  .topbar__actions {
+    flex: 1 1 100%;
+    min-width: 0;
   }
   .main,
   .dock {
@@ -2192,7 +2209,7 @@ kbd {
     opacity: 0.55;
   }
   .intro__shade {
-    background: linear-gradient(180deg, rgba(2, 4, 9, 0.2), rgba(2, 4, 9, 0.85));
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.85));
   }
   .intro__copy {
     left: 20px;
@@ -2284,8 +2301,8 @@ kbd {
   position: fixed;
   z-index: 55;
   border-radius: 8px;
-  box-shadow: 0 0 0 200vmax rgba(2, 4, 9, 0.62);
-  outline: 1px solid rgba(230, 235, 245, 0.6);
+  box-shadow: 0 0 0 200vmax rgba(0, 0, 0, 0.66);
+  outline: 1px solid rgba(255, 255, 255, 0.6);
   pointer-events: none;
   transition: left 320ms var(--ease), top 320ms var(--ease), width 320ms var(--ease), height 320ms var(--ease);
 }
@@ -2296,7 +2313,7 @@ kbd {
   padding: 14px 16px 12px;
   border: 1px solid var(--line-strong);
   border-radius: 8px;
-  background: #121b30;
+  background: #111111;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
 }
 .tour__count {
@@ -2341,7 +2358,7 @@ kbd {
   gap: 1px;
   padding: 6px 9px;
   border-radius: var(--r);
-  background: rgba(11, 17, 32, 0.88);
+  background: var(--overlay);
   color: var(--text-2);
   font-size: 11px;
   line-height: 1.45;
@@ -2358,4 +2375,23 @@ kbd {
 }
 .gomap__dim {
   color: var(--text-3);
+}
+
+/* phone: the verdict card's three facts stack (kept after the card's own rules so it wins) */
+@media (max-width: 1100px) {
+  .answer__facts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .answer__facts > div,
+  .answer__facts > div:first-child {
+    padding: 0;
+  }
+  .answer__facts > div + div {
+    border-left: 0;
+  }
+  .answer__facts dd {
+    white-space: normal;
+    flex-wrap: wrap;
+  }
 }

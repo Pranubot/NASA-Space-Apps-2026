@@ -44,7 +44,7 @@ function BodyLens({
         </radialGradient>
       </defs>
       <g clipPath={`url(#${id})`}>
-        <rect width={S} height={S} fill="#04070e" />
+        <rect width={S} height={S} fill="#000" />
         {body === "sun" ? (
           <>
             <circle cx={S / 2} cy={S / 2} r={rr * 2.2} fill={COLOR.sun} opacity={0.12} />
@@ -56,7 +56,7 @@ function BodyLens({
             <path d={`M0,${-rr}A${rr},${rr} 0 0 1 0,${rr}A${rx},${rr} 0 0 ${phase > 0.5 ? 1 : 0} 0,${-rr}Z`} fill="#5aa9ff" />
           </g>
         )}
-        <path d={d} fill="#262b38" stroke="#aab6d0" strokeWidth={1} />
+        <path d={d} fill="#262626" stroke="#b5b5b5" strokeWidth={1} />
       </g>
       <circle cx={S / 2} cy={S / 2} r={S / 2 - 1} fill="none" stroke={COLOR.lineStrong} />
     </svg>

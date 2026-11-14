@@ -37,11 +37,11 @@ export function Pin({
     >
       <circle r={12} fill="transparent" />
       {focused && <circle className="pin__pulse" r={7} fill="none" stroke={color} strokeWidth={1.5} />}
-      <circle r={selected ? 5.5 : 4.2} fill={selected ? color : "#0b1120"} stroke={selected ? "#0b1120" : color} strokeWidth={selected ? 1.5 : 1.8} />
+      <circle r={selected ? 5.5 : 4.2} fill={selected ? color : "#000"} stroke={selected ? "#000" : color} strokeWidth={selected ? 1.5 : 1.8} />
       {((selected && showLabel) || hovered) && (
         <text
           x={9} y={4} fontFamily={FONT_UI} fontSize={11} fontWeight={650} fill={COLOR.text}
-          stroke="#070b14" strokeWidth={3} paintOrder="stroke" strokeLinejoin="round"
+          stroke="#000" strokeWidth={3} paintOrder="stroke" strokeLinejoin="round"
         >
           {site.name}
         </text>

@@ -17,7 +17,7 @@ function LowSunFigure() {
       <circle cx="80" cy="22" r="6" fill={COLOR.sun} />
       <text x="80" y="94" textAnchor="middle" fontSize="10" fill={COLOR.text2}>Earth, mid-latitudes</text>
       <line x1="170" y1="80" x2="310" y2="80" stroke={COLOR.text3} />
-      <path d="M170,80 L186,71 L202,78 L226,66 L246,79 L270,72 L292,78 L310,74 L310,80Z" fill="#2a3040" stroke="#8b97b3" strokeWidth="0.8" />
+      <path d="M170,80 L186,71 L202,78 L226,66 L246,79 L270,72 L292,78 L310,74 L310,80Z" fill="#2a2a2a" stroke="#999999" strokeWidth="0.8" />
       <line x1="170" y1="73" x2="310" y2="73" stroke={COLOR.sun} strokeOpacity="0.5" strokeDasharray="2 4" />
       <circle cx="214" cy="73" r="6" fill={COLOR.sun} />
       <text x="240" y="94" textAnchor="middle" fontSize="10" fill={COLOR.text2}>Lunar south pole</text>
@@ -28,7 +28,7 @@ function LowSunFigure() {
 function LibrationFigure() {
   return (
     <svg viewBox="0 0 320 96" className="figure" role="img" aria-label="Seen from the pole, Earth traces a small loop that dips below the horizon for part of each month.">
-      <path d="M0,62 L40,56 L70,64 L110,52 L150,63 L190,57 L230,66 L275,54 L320,61 L320,96 L0,96Z" fill="#2a3040" stroke="#8b97b3" strokeWidth="0.8" />
+      <path d="M0,62 L40,56 L70,64 L110,52 L150,63 L190,57 L230,66 L275,54 L320,61 L320,96 L0,96Z" fill="#2a2a2a" stroke="#999999" strokeWidth="0.8" />
       <ellipse cx="160" cy="54" rx="34" ry="30" fill="none" stroke={COLOR.earth} strokeOpacity="0.6" strokeDasharray="3 4" />
       <circle cx="184" cy="33" r="9" fill={COLOR.earth} />
       <circle cx="142" cy="79" r="9" fill="none" stroke={COLOR.earth} strokeDasharray="3 3" />

@@ -9,8 +9,8 @@ import { encodeScenario } from "../state/url";
 function Mark() {
   return (
     <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden>
-      <circle cx="16" cy="16" r="10" fill="#d8dee9" />
-      <path d="M16 6a10 10 0 0 0 0 20a13.5 10 0 0 1 0-20z" fill="#070b14" opacity=".84" />
+      <circle cx="16" cy="16" r="10" fill="#e5e5e5" />
+      <path d="M16 6a10 10 0 0 0 0 20a13.5 10 0 0 1 0-20z" fill="#000" opacity=".86" />
       <circle cx="26" cy="7" r="2.6" fill="#f5b942" />
     </svg>
   );
