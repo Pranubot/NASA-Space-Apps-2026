@@ -8,7 +8,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Site } from "../data/types";
 import { clamp, deg, rad, wrap180 } from "../lib/astro";
 import { COLOR, FONT_UI } from "../lib/theme";
-import { fmtLatLon } from "../lib/time";
 import { useAllSummaries } from "../hooks/useSiteData";
 import { useSize } from "../hooks/useApp";
 import { allSites, findSite, useStore } from "../state/store";
@@ -187,7 +186,6 @@ export function MoonGlobe() {
   };
 
   const visible = sites.map((s) => ({ s, p: project(s.lat, s.lon) })).filter((x): x is { s: Site; p: [number, number] } => x.p !== null);
-  const hiddenCount = sites.length - visible.length;
   const sunP = sub ? project(sub.sLat, sub.sLon) : null;
   const earthP = sub ? project(sub.eLat, sub.eLon) : null;
 
@@ -259,12 +257,6 @@ export function MoonGlobe() {
           <button type="button" className="iconbtn" onClick={() => setView((v) => ({ ...v, zoom: 1 }))} aria-label="Reset zoom"><RotateCcw size={14} /></button>
         </div>
       </div>
-      {sub && (
-        <p className="map__status">
-          {hiddenCount > 0 ? `${hiddenCount} sites on the other side. ` : ""}
-          Earth overhead at <span className="num">{fmtLatLon(sub.eLat, wrap180(sub.eLon), 1)}</span>
-        </p>
-      )}
     </div>
   );
 }

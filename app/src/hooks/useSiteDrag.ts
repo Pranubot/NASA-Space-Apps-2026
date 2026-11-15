@@ -6,7 +6,7 @@ import { useCallback } from "react";
 import { MAX_SELECTED, findSite, useStore } from "../state/store";
 
 export const TRACK_AXIS_H = 20;
-export const TRACK_ROW_H = 46;
+export const TRACK_ROW_H = 32;
 
 export interface DropAction {
   kind: "add" | "replace" | "already" | "full";
