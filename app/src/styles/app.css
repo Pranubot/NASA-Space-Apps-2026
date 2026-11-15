@@ -1,4 +1,4 @@
-/* Lunar Landing Site Navigator
+/* LunaSol: lunar landing site navigator
    Dark mission-control workspace. Semantic colours are fixed and mirrored in lib/theme.ts:
    Sun amber, Earth blue, Both green, NO-GO red. Colour never carries a state on its own. */
 
@@ -2195,6 +2195,15 @@ kbd {
   line-height: 1.02;
   letter-spacing: -0.025em;
   text-wrap: balance;
+}
+.intro__sub {
+  display: block;
+  margin-top: 10px;
+  font-size: clamp(15px, 1.35vw, 20px);
+  font-weight: 500;
+  font-stretch: 100%;
+  letter-spacing: 0;
+  color: var(--text-2);
 }
 .intro__lines {
   display: grid;

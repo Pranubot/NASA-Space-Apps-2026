@@ -137,7 +137,7 @@ export default function Intro() {
 
   return (
     <motion.div
-      className="intro" role="dialog" aria-modal="true" aria-label="Lunar Landing Site Navigator introduction"
+      className="intro" role="dialog" aria-modal="true" aria-label="LunaSol introduction"
       initial={{ opacity: 1 }}
       exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 1.08, filter: "blur(14px)" }}
       transition={{ duration: reduced ? 0.2 : 0.75, ease: [0.16, 1, 0.3, 1] }}
@@ -152,7 +152,8 @@ export default function Intro() {
       <div className="intro__shade" />
       <div className="intro__copy">
         <motion.h1 initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}>
-          Lunar Landing Site Navigator
+          LunaSol
+          <span className="intro__sub">Lunar landing site navigator</span>
         </motion.h1>
         <div className="intro__lines">
           {LINES.map((line, i) => (

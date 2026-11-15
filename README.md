@@ -1,6 +1,6 @@
-# Lunar Landing Site Navigator
+# LunaSol
 
-NASA Space Apps Challenge 2026 · *Lunar Landing Site Navigator*
+NASA Space Apps Challenge 2026 · *Lunar Landing Site Navigator* challenge
 
 One screen that answers the planner's question: **if we land at this site on this date, how many hours
 can we operate and talk home, what is the longest night we must survive, and what changes if the

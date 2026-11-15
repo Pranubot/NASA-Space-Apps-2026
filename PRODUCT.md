@@ -49,7 +49,7 @@ engineering teams argue from the same scenario, shared by URL.
 
 ## Brand Commitments
 
-Name: Lunar Landing Site Navigator. SPEC.md section 6 pins the visual language: dark mission-control,
+Name: LunaSol (renamed from "Lunar Landing Site Navigator", the challenge title, on 2026-11-15). SPEC.md section 6 pins the visual language: dark mission-control,
 near-black blue background, hairline panel borders, monospace tabular numbers, and the fixed semantic
 colours above.
 

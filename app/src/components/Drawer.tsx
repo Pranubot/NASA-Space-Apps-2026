@@ -160,7 +160,7 @@ function Sources() {
           </li>
         ))}
       </ul>
-      <p className="prose__small">Built for the NASA Space Apps Challenge 2026, Lunar Landing Site Navigator. Not an operational planning product.</p>
+      <p className="prose__small">LunaSol was built for the NASA Space Apps Challenge 2026, Lunar Landing Site Navigator challenge. Not an operational planning product.</p>
     </div>
   );
 }

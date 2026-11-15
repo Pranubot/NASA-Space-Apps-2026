@@ -47,7 +47,7 @@ export function Header() {
     <header className="topbar">
       <div className="brand">
         <Mark />
-        <span className="brand__name">Lunar Landing Site Navigator</span>
+        <span className="brand__name">LunaSol</span>
       </div>
       <label className="scenario">
         <span className="sr-only">Scenario title</span>
