@@ -14,7 +14,9 @@ import { SiteMap } from "./components/SiteMap";
 import { Timeline } from "./components/Timeline";
 import { Tour } from "./components/Tour";
 
-const Intro = lazy(() => import("./components/Intro"));
+// start fetching the opening sequence straight away, in parallel with the data
+const introChunk = import("./components/Intro");
+const Intro = lazy(() => introChunk);
 
 function useBoot() {
   const [error, setError] = useState<string | null>(null);
@@ -129,7 +131,7 @@ export default function App() {
 
       <AnimatePresence>
         {ds && introOpen && (
-          <Suspense fallback={null}>
+          <Suspense fallback={<div className="intro" aria-hidden />}>
             <Intro key="intro" />
           </Suspense>
         )}

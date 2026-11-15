@@ -12,6 +12,7 @@ import type { Site } from "../data/types";
 import { rad } from "../lib/astro";
 import { COLOR } from "../lib/theme";
 import { usePrefersReducedMotion } from "../hooks/useApp";
+import { Logo } from "./Logo";
 import { findSite, useStore } from "../state/store";
 
 const DATA = `${import.meta.env.BASE_URL}data/`;
@@ -152,6 +153,7 @@ export default function Intro() {
       <div className="intro__shade" />
       <div className="intro__copy">
         <motion.h1 initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}>
+          <Logo size={64} className="intro__logo" />
           LunaSol
           <span className="intro__sub">Lunar landing site navigator</span>
         </motion.h1>

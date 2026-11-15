@@ -23,6 +23,8 @@ export function Pin({
 }) {
   const color = verdict ? VERDICT_COLOR[verdict] : COLOR.text2;
   const drag = useSiteDrag(site.id);
+  // a small solid dot; compared sites are larger with a thin white ring, the focused one a soft halo
+  const r = selected ? 3.6 : 2.5;
   return (
     <g
       className="pin" transform={`translate(${x} ${y})`} onPointerEnter={onEnter} onPointerLeave={onLeave}
@@ -36,12 +38,14 @@ export function Pin({
       onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onClick()}
     >
       <circle r={12} fill="transparent" />
-      {focused && <circle className="pin__pulse" r={7} fill="none" stroke={color} strokeWidth={1.5} />}
-      <circle r={selected ? 5.5 : 4.2} fill={selected ? color : "#000"} stroke={selected ? "#000" : color} strokeWidth={selected ? 1.5 : 1.8} />
+      {focused && <circle r={8} fill={color} fillOpacity={0.14} stroke={color} strokeOpacity={0.5} strokeWidth={1} />}
+      <circle r={r + 1.3} fill="#000" fillOpacity={0.6} />
+      <circle className="pin__dot" r={r} fill={color} fillOpacity={selected || hovered ? 1 : 0.85} />
+      {selected && <circle r={r + 2} fill="none" stroke="#fff" strokeOpacity={0.8} strokeWidth={0.9} />}
       {((selected && showLabel) || hovered) && (
         <text
-          x={9} y={4} fontFamily={FONT_UI} fontSize={11} fontWeight={650} fill={COLOR.text}
-          stroke="#000" strokeWidth={3} paintOrder="stroke" strokeLinejoin="round"
+          x={focused ? 12 : 9} y={3.5} fontFamily={FONT_UI} fontSize={10.5} fontWeight={600} fill={COLOR.text}
+          stroke="rgba(0,0,0,0.8)" strokeWidth={2.5} paintOrder="stroke" strokeLinejoin="round"
         >
           {site.name}
         </text>

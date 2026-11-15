@@ -190,6 +190,7 @@ export function SiteMap() {
   const [view, setView] = useState({ cx: 0, cy: 0, half: POLAR_HALF_M * 1.04 });
   const [tip, setTip] = useState<Tip | null>(null);
   const [goMap, setGoMap] = useState(false);
+  const [readSlot, setReadSlot] = useState<HTMLDivElement | null>(null);
   const [cursor, setCursor] = useState<readonly [number, number] | null>(null);
   const drag = useRef<{ x: number; y: number; cx: number; cy: number; moved: boolean } | null>(null);
 
@@ -302,6 +303,7 @@ export function SiteMap() {
           </button>
         </div>
       </header>
+      {region === "polar" && goMap && <div className="map__readslot" ref={setReadSlot} />}
       {region === "global" ? <MoonGlobe /> : null}
       <div
         className={`map__view map__view--polar${placing ? " is-placing" : ""}`} ref={ref} hidden={region !== "polar"}
@@ -339,7 +341,7 @@ export function SiteMap() {
         onPointerLeave={() => setCursor(null)}
       >
         {region === "polar" && <canvas ref={canvasRef} className="map__canvas" style={{ width: w, height: h }} />}
-        {region === "polar" && goMap && grid && w > 0 && <GoMap grid={grid} view={view} w={w} h={h} scale={scale} cursor={cursor} />}
+        {region === "polar" && goMap && grid && w > 0 && <GoMap grid={grid} view={view} w={w} h={h} scale={scale} cursor={cursor} readSlot={readSlot} />}
         {w > 0 && (
           <svg className="map__svg" width={w} height={h}>
             {region === "polar" && (
@@ -390,16 +392,19 @@ export function SiteMap() {
               <g pointerEvents="none">
                 {([["Sun", sub.sLon, COLOR.sun], ["Earth", sub.eLon, COLOR.earth]] as const).map(([label, lon, color]) => {
                   // Sun on the frame edge, Earth one step in, so they stay apart at full and new Moon
-                  const [x, y] = edge(lon, label === "Sun" ? 14 : 38);
+                  const [x, y] = edge(lon, label === "Sun" ? 12 : 30);
+                  // a small arrowhead pointing out towards the body, with a quiet label
+                  const ux = Math.sin(rad(lon)), uy = -Math.cos(rad(lon));
+                  const tri = `M${x + ux * 4},${y + uy * 4}L${x - ux * 3 - uy * 3.5},${y - uy * 3 + ux * 3.5}L${x - ux * 3 + uy * 3.5},${y - uy * 3 - ux * 3.5}Z`;
                   const left = x > w / 2;
                   return (
                     <g key={label}>
-                      <circle cx={x} cy={y} r={5.5} fill={color} stroke="#000" strokeWidth={2} />
+                      <path d={tri} fill={color} />
                       <text
-                        x={left ? x - 10 : x + 10} y={y + 3.5} textAnchor={left ? "end" : "start"} fontFamily={FONT_UI} fontSize={10.5} fontWeight={650}
-                        fill={color} stroke="#000" strokeWidth={3} paintOrder="stroke"
+                        x={left ? x - 9 : x + 9} y={y + 3.5} textAnchor={left ? "end" : "start"} fontFamily={FONT_UI} fontSize={10} fontWeight={600}
+                        fill={color} stroke="rgba(0,0,0,0.8)" strokeWidth={2.5} paintOrder="stroke"
                       >
-                        to {label}
+                        {label}
                       </text>
                     </g>
                   );
