@@ -27,7 +27,8 @@ export interface Panels {
   readouts: boolean;
 }
 
-export const OPEN_PANELS: Panels = { inspector: true, answer: true, readouts: true };
+/** The guided tour: summaries folded to their one-line decisions so the sky stays in view. */
+export const TOUR_PANELS: Panels = { inspector: true, answer: false, readouts: false };
 const DEFAULT_PANELS: Panels = { inspector: true, answer: false, readouts: false };
 const PANELS_KEY = "lsn.panels";
 
@@ -153,6 +154,8 @@ export function makeCustomSite(lat: number, lon: number, elevationM?: number): S
 let toastId = 0;
 /** the viewer's own scenario, kept while the tour borrows the screen */
 let beforeTour: ScenarioState | null = null;
+/** the viewer's own panel layout, put back when the tour ends */
+let panelsBeforeTour: Panels | null = null;
 
 export const useStore = create<State>((set, get) => ({
   dataset: null,
@@ -287,6 +290,7 @@ export const useStore = create<State>((set, get) => ({
         selectedIds: s.selectedIds, focusId: s.focusId, startMs: s.startMs, days: s.days, tMs: s.tMs,
         constraints: s.constraints, customSites: s.customSites, title: s.title, view: s.view, simple: s.simple,
       };
+      panelsBeforeTour = s.panels;
     }
     set({ tourStep: 0, introOpen: false, drawer: null });
   },
@@ -294,7 +298,9 @@ export const useStore = create<State>((set, get) => ({
   endTour: () => {
     set({ tourStep: null, playing: false });
     if (beforeTour) get().applyScenario(beforeTour);
+    if (panelsBeforeTour) set({ panels: panelsBeforeTour });
     beforeTour = null;
+    panelsBeforeTour = null;
   },
   showToast: (text) => {
     const id = ++toastId;
