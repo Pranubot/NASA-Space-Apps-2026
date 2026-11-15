@@ -7,7 +7,7 @@
 
 import { DAY, HOUR } from "../lib/time";
 import { DEFAULT_CONSTRAINTS } from "../lib/visibility";
-import { DEFAULT_SCENARIO, DOCK_DEFAULT, OPEN_PANELS } from "./store";
+import { DEFAULT_SCENARIO, OPEN_PANELS } from "./store";
 
 export const TOUR_SLIP_DAYS = 14;
 
@@ -29,7 +29,6 @@ const BASE = {
   inspectorTab: "compare" as "compare" | "limits" | "whatif",
   // the tour points at every panel, so it opens them all
   panels: OPEN_PANELS,
-  dockH: DOCK_DEFAULT,
   analysisTab: "slip" as const,
   drawer: null,
 };

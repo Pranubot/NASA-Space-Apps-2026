@@ -141,7 +141,7 @@ a:hover {
 
 .app {
   display: grid;
-  grid-template-rows: 52px minmax(0, 1fr) var(--dock-h, 204px);
+  grid-template-rows: 52px minmax(0, 1fr) 204px;
   height: 100vh;
   min-width: 1180px;
   gap: 1px;
@@ -170,66 +170,9 @@ a:hover {
 }
 
 .dock {
-  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   min-height: 0;
-}
-.dock > .timeline {
-  overflow: hidden;
-}
-
-/* timeline resize: a 10 px grab zone straddling the top edge, visible on hover */
-.dockhandle {
-  position: absolute;
-  z-index: 8;
-  left: 0;
-  right: 0;
-  top: -5px;
-  height: 10px;
-  display: grid;
-  place-items: center;
-  cursor: row-resize;
-  touch-action: none;
-}
-.dockhandle::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 4px;
-  height: 2px;
-  background: var(--text-3);
-  opacity: 0;
-  transition: opacity var(--fast) var(--ease);
-}
-.dockhandle__grip {
-  position: relative;
-  width: 36px;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--text-2);
-  opacity: 0;
-  transition: opacity var(--fast) var(--ease);
-}
-.dockhandle:hover::before,
-.dockhandle:focus-visible::before,
-body.is-resizing-dock .dockhandle::before {
-  opacity: 0.6;
-}
-.dockhandle:hover .dockhandle__grip,
-.dockhandle:focus-visible .dockhandle__grip,
-body.is-resizing-dock .dockhandle__grip,
-.dockhandle.is-folded .dockhandle__grip {
-  opacity: 1;
-}
-.dockhandle:focus-visible {
-  outline: none;
-}
-body.is-resizing-dock,
-body.is-resizing-dock * {
-  cursor: row-resize !important;
-  user-select: none !important;
 }
 
 /* inspector: one job at a time on the right */
@@ -2260,9 +2203,6 @@ kbd {
   .topbar__actions {
     flex: 1 1 100%;
     min-width: 0;
-  }
-  .dockhandle {
-    display: none;
   }
   .main,
   .dock {

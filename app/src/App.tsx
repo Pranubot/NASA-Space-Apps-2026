@@ -8,7 +8,6 @@ import { decodeScenario } from "./state/url";
 import { Drawer } from "./components/Drawer";
 import { Header } from "./components/Header";
 import { HeroPanel } from "./components/HeroPanel";
-import { DockHandle } from "./components/DockHandle";
 import { DragGhost, Inspector } from "./components/Inspector";
 import { SiteList } from "./components/SiteList";
 import { SiteMap } from "./components/SiteMap";
@@ -88,7 +87,6 @@ export default function App() {
   const toast = useStore((s) => s.toast);
   const simple = useStore((s) => s.simple);
   const inspectorOpen = useStore((s) => s.panels.inspector);
-  const dockH = useStore((s) => s.dockH);
   const touring = useStore((s) => s.tourStep !== null);
   usePlayback();
   useUrlSync(!!ds && !introOpen);
@@ -108,7 +106,7 @@ export default function App() {
   return (
     <>
       {ds ? (
-        <div className={`app${simple ? " is-simple" : ""}`} inert={introOpen} style={{ ["--dock-h" as string]: `${dockH}px` }}>
+        <div className={`app${simple ? " is-simple" : ""}`} inert={introOpen}>
           <Header />
           <main className={`main${inspectorOpen ? "" : " main--wide"}`}>
             <div className="rail rail--left">
@@ -119,7 +117,6 @@ export default function App() {
             <Inspector />
           </main>
           <div className="dock">
-            <DockHandle />
             <Timeline />
           </div>
         </div>
