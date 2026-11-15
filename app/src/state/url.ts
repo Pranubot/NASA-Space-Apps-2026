@@ -5,7 +5,7 @@
 
 import { DAY, HOUR, isoDate, parseIsoDate } from "../lib/time";
 import { DEFAULT_CONSTRAINTS, type Constraints } from "../lib/visibility";
-import { DEFAULT_SCENARIO, MAX_SELECTED, makeCustomSite, type ScenarioState } from "./store";
+import { DEFAULT_SCENARIO, MAX_DAYS, MAX_SELECTED, makeCustomSite, type ScenarioState } from "./store";
 
 const C_KEYS: [short: string, key: keyof Constraints][] = [
   ["frac", "sunMinFraction"], ["mask", "earthMaskDeg"], ["dark", "maxDarkH"], ["both", "minBothHoursPerDay"],
@@ -53,7 +53,7 @@ export function decodeScenario(search: string): Partial<ScenarioState> | null {
   const start = parseIsoDate(p.get("start") ?? "");
   if (start !== null) out.startMs = start;
   const d = Number(p.get("d"));
-  if (Number.isFinite(d) && d >= 1 && d <= 120) out.days = Math.round(d);
+  if (Number.isFinite(d) && d >= 1 && d <= MAX_DAYS) out.days = Math.round(d);
   const base = out.startMs ?? DEFAULT_SCENARIO.startMs;
   const t = Number(p.get("t"));
   out.tMs = base + (Number.isFinite(t) ? t * HOUR : 0);

@@ -223,7 +223,8 @@ const Paths = memo(function Paths({ v, g, i0, i1 }: { v: View; g: Geometry; i0: 
     const perDay = Math.round(DAY / g.stepMs);
     const first = Math.ceil(timeAt(g, i0) / DAY) * DAY;
     const total = (i1 - i0) / perDay;
-    const every = total > 45 ? 7 : 1;
+    // a dated dot per day on short missions, per week on long ones, per month beyond six months
+    const every = total > 180 ? 30 : total > 45 ? 7 : 1;
     let n = 0;
     for (let t = first; t <= timeAt(g, i1); t += DAY, n++) {
       if (n % every) continue;

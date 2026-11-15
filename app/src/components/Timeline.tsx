@@ -152,13 +152,25 @@ export function Timeline() {
     const fit = Math.max(1, Math.ceil((54 * days) / plotW));
     const every = [1, 2, 3, 7, 14, 30].find((n) => n >= fit) ?? 30;
     const out: { t: number; label: string; month: boolean }[] = [];
+    if (days > 60) {
+      // long missions: one tick per month on the 1st, year shown on January
+      const step = Math.max(1, Math.ceil((54 * days) / (30.4 * plotW)));
+      const s = new Date(t0);
+      for (let k = 1; ; k += step) {
+        const t = Date.UTC(s.getUTCFullYear(), s.getUTCMonth() + k, 1);
+        if (t >= t1) break;
+        const jan = new Date(t).getUTCMonth() === 0;
+        out.push({ t, label: jan ? `${monthName(t)} ${new Date(t).getUTCFullYear()}` : monthName(t), month: true });
+      }
+      return out;
+    }
     for (let d = 0; d < days; d += every) {
       const t = t0 + d * DAY;
       const first = new Date(t).getUTCDate() === 1;
       out.push({ t, label: days > 31 ? (first ? monthName(t) : String(new Date(t).getUTCDate())) : fmtDayMonth(t), month: first });
     }
     return out;
-  }, [t0, days, plotW]);
+  }, [t0, t1, days, plotW]);
 
   const local = (e: React.PointerEvent) => {
     const r = e.currentTarget.getBoundingClientRect();

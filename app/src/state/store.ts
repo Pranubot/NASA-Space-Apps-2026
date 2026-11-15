@@ -99,7 +99,8 @@ interface State extends ScenarioState {
   showToast(text: string): void;
 }
 
-export const DAY_OPTIONS = [7, 14, 30, 60, 90];
+export const DAY_OPTIONS = [7, 14, 30, 60, 90, 180, 270, 365];
+export const MAX_DAYS = 365;
 export const SPEEDS = [1, 3, 6, 12, 24, 72];
 
 export function customSiteId(lat: number, lon: number): string {
