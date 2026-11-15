@@ -167,7 +167,7 @@ function TerrainMesh({ patch, inst, exag, contours, siteElevationM }: { patch: T
   u.uContours.value = contours ? 1 : 0;
   u.uHoffset.value = centreH || siteElevationM;
 
-  return <mesh geometry={geometry} material={material} scale={[1, exag, 1]} />;
+  return <mesh name="terrain" geometry={geometry} material={material} scale={[1, exag, 1]} />;
 }
 
 function Sky({ inst }: { inst: Instant }) {
@@ -257,11 +257,12 @@ function Markers({ inst, name, sizeKm, close }: { inst: Instant; name: string; s
           <Label text={name} color={COLOR.text} position={[0, sizeKm * 0.085, 0]} large />
         </>
       )}
-      {line(inst.sunAz, COLOR.sun)}
+      {/* direction lines run 60 m up; from the lander's 2 m eye they would cut across the sky */}
+      {!close && line(inst.sunAz, COLOR.sun)}
       {tip(inst.sunAz, "to Sun", COLOR.sun)}
-      {line(inst.earthAz, COLOR.earth)}
+      {!close && line(inst.earthAz, COLOR.earth)}
       {tip(inst.earthAz, "to Earth", COLOR.earth)}
-      {line(0, COLOR.text3)}
+      {!close && line(0, COLOR.text3)}
       {tip(0, "N", COLOR.text2)}
     </group>
   );
@@ -290,23 +291,46 @@ function ConstantScale() {
 
 type CamMode = "orbit" | "lander";
 
+/**
+ * Eye height in lander view, km. 30 m: a camera mast above the site. The terrain mesh has 160 m
+ * cells, so from a true 2 m eye the nearby ground flattens into one smooth slab and hides the
+ * ridges; 30 m keeps them in view while the look-around still pivots on the spot.
+ */
+const EYE_KM = 0.03;
+/** How far ahead the look-at point sits in lander view, km. Tiny, so dragging turns the view in place. */
+const LOOK_KM = 0.002;
+
 function CameraRig({ mode, inst, sizeKm, nonce }: { mode: CamMode; inst: Instant; sizeKm: number; nonce: number }) {
   const controls = useRef<OrbitControlsImpl>(null);
-  const camera = useThree((s) => s.camera);
+  const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
+  const scene = useThree((s) => s.scene);
   const goal = useRef<{ pos: THREE.Vector3; target: THREE.Vector3; t: number } | null>(null);
   const sunAz = useRef(inst.sunAz);
   sunAz.current = inst.sunAz;
+  const lander = mode === "lander";
 
   useEffect(() => {
-    if (mode === "lander") {
+    if (lander) {
+      // stand on the ground at the site: find the terrain surface under the site
+      const terrain = scene.getObjectByName("terrain");
+      let ground = 0;
+      if (terrain) {
+        const hit = new THREE.Raycaster(new THREE.Vector3(0, 50, 0), new THREE.Vector3(0, -1, 0)).intersectObject(terrain, false)[0];
+        if (hit) ground = hit.point.y;
+      }
+      const eye = new THREE.Vector3(0, ground + EYE_KM, 0);
       const a = rad(sunAz.current);
+      // face the Sun, level with the horizon
       const fwd = new THREE.Vector3(Math.sin(a), 0, -Math.cos(a));
-      // a mast camera a little behind and above the lander, looking along the Sun's azimuth
-      goal.current = { pos: fwd.clone().multiplyScalar(-0.5).setY(0.16), target: fwd.clone().multiplyScalar(3).setY(0.22), t: 0 };
+      goal.current = { pos: eye, target: eye.clone().addScaledVector(fwd, LOOK_KM), t: 0 };
+      // at 2 m the ground is metres away, so the near clip plane has to come in close
+      camera.near = 0.0002;
     } else {
       goal.current = { pos: new THREE.Vector3(sizeKm * 0.42, sizeKm * 0.36, sizeKm * 0.62), target: new THREE.Vector3(0, 0, 0), t: 0 };
+      camera.near = 0.02;
     }
-  }, [mode, sizeKm, nonce]);
+    camera.updateProjectionMatrix();
+  }, [lander, sizeKm, nonce, scene, camera]);
 
   useFrame((_, dt) => {
     const g = goal.current;
@@ -317,12 +341,26 @@ function CameraRig({ mode, inst, sizeKm, nonce }: { mode: CamMode; inst: Instant
     camera.position.lerp(g.pos, k * 0.18 + 0.02);
     c.target.lerp(g.target, k * 0.18 + 0.02);
     c.update();
-    if (g.t >= 1 && camera.position.distanceTo(g.pos) < sizeKm * 0.002) goal.current = null;
+    if (g.t >= 1 && camera.position.distanceTo(g.pos) < Math.max(sizeKm * 0.002, 0.0001)) {
+      // land exactly on the eye point so look-around turns about it
+      camera.position.copy(g.pos);
+      c.target.copy(g.target);
+      c.update();
+      goal.current = null;
+    }
   });
 
-  return (
+  return lander ? (
+    // look around from where the lander stands: the pivot is just in front of the eye, so dragging
+    // turns the head instead of swinging the camera around the scene
     <OrbitControls
-      ref={controls} enableDamping dampingFactor={0.08} maxPolarAngle={Math.PI / 2 - 0.01}
+      key="lander" ref={controls} enableDamping dampingFactor={0.12} enableZoom={false} enablePan={false}
+      rotateSpeed={-0.35} minPolarAngle={0.15} maxPolarAngle={Math.PI - 0.15}
+      minDistance={LOOK_KM * 0.5} maxDistance={LOOK_KM * 2} onStart={() => (goal.current = null)}
+    />
+  ) : (
+    <OrbitControls
+      key="orbit" ref={controls} enableDamping dampingFactor={0.08} maxPolarAngle={Math.PI / 2 - 0.01}
       minDistance={0.3} maxDistance={sizeKm * 2.2} onStart={() => (goal.current = null)}
     />
   );
