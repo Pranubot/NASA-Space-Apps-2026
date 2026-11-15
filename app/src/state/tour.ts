@@ -47,25 +47,25 @@ export interface TourStep {
 export const TOUR_STEPS: TourStep[] = [
   {
     target: ".hero__stage", place: "right",
-    title: "The sky at the Moon's south pole",
-    text: "This is the view from Connecting Ridge, near Shackleton crater. The Sun never climbs more than about 2° here. It circles the horizon, skimming the hills.",
+    title: "The Horizon View",
+    text: "You can interpret this window as a 360° POV of the rover flattened in a 2d space. This is the view from Connecting Ridge, near Shackleton crater. The Sun never climbs more than about 2° here. You can see it circling the horizon, skimming the hills. ",
     set: { playing: true },
   },
   {
     target: ".timeline", place: "above", align: "center",
-    title: "When can the lander work?",
-    text: "Yellow bars: sunlight, so there is power. Blue bars: Earth is in view, so the lander can talk home. Green bars: both at once. Only green is working time.",
+    title: "When is the lander operational?",
+    text: "Yellow bars: sunlight, so there is power. Blue bars: Earth is in view, so the lander can talk to home. Green bars: both at once. Green is the most critical bar for safe operations.",
     set: { playing: true },
   },
   {
     target: ".answer", place: "right",
-    title: "The answer comes first",
-    text: "Every hour of the mission is checked against the limits: battery, working hours and contact with Earth. Connecting Ridge passes them all, so it is GO.",
+    title: "All systems go",
+    text: "Every hour of the mission is checked against the limits: battery, working hours and contact with Earth. Connecting Ridge passes them all, so the location is a GO.",
   },
   {
     target: ".answer", place: "below",
-    title: "A site that fails",
-    text: "Same mission, another south-pole site: IM-2 Athena. Its longest night is 171 hours and the battery survives 50. NO-GO, and everyone can see why.",
+    title: "Houston, we have a problem",
+    text: "Same mission, but another south-pole site: IM-2 Athena. Its longest night is 171 hours and the battery survives 50. A clear NO-GO, and you can see why.",
     set: { focusId: "im2-athena" },
   },
   {
@@ -77,19 +77,19 @@ export const TOUR_STEPS: TourStep[] = [
   {
     target: ".answer", place: "below",
     title: "Two weeks late",
-    text: "Same site, landing two weeks later. The Sun and Earth are no longer up together for long enough, and Connecting Ridge turns NO-GO. Malapert Massif fails too.",
+    text: "Viewing the same site, but landing two weeks later. The Sun and Earth are no longer up together for long enough, and Connecting Ridge turns NO-GO. Malapert Massif fails too.",
     set: { startMs: SLIPPED, tMs: SLIPPED + 36 * HOUR },
   },
   {
     target: ".hero__stage", place: "right",
-    title: "The ground itself",
-    text: "Real terrain, measured by NASA's LOLA laser altimeter and lit from the Sun's real direction. As time plays, the shadows sweep across the craters.",
+    title: "Ground-level view",
+    text: "3D view of real terrain, measured by NASA's LOLA laser altimeter and lit from the Sun's real direction. As time plays, the shadows sweep across the craters.",
     set: { view: "terrain", playing: true },
   },
   {
     target: ".topbar__actions", place: "below", align: "end",
-    title: "Real data, one link",
-    text: "Sun and Earth positions come from JPL Horizons and match it to within 0.01°. Share copies a link that reopens this exact scenario for your team. The planner is yours.",
+    title: "Real data",
+    text: "Sun and Earth positions come from JPL Horizons and match it to within 0.01°. Share copies a link that reopens this exact scenario for your team or friends.",
   },
 ];
 
