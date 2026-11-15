@@ -30,7 +30,7 @@ HERE = Path(__file__).parent
 OUT = HERE.parent / "app" / "public" / "data"
 
 EPHEM_START = datetime(2026, 11, 1)
-EPHEM_END = datetime(2029, 1, 1)
+EPHEM_END = datetime(2031, 1, 1)
 AZ_STEP = 0.25
 POLAR_PATCH = (512, 160.0)   # n, metres per pixel  -> 82 km square
 GLOBAL_PATCH = (256, 480.0)  # -> 123 km square

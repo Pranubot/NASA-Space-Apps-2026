@@ -38,7 +38,7 @@ engineering teams argue from the same scenario, shared by URL.
 ## Capabilities and Constraints
 
 - Real data, committed to the repo: JPL Horizons sub-Earth / sub-solar points (hourly, Nov 2026 to
-  Jan 2029) and LOLA terrain (LDEM_80S_80M, LDEM_64). Validation against direct Horizons queries is
+  Jan 2031) and LOLA terrain (LDEM_80S_80M, LDEM_64). Validation against direct Horizons queries is
   recorded in `app/public/data/validation.json`.
 - An analytic fallback model must always run with zero data files, and anything approximate is badged.
 - Views never touch raw data; they go through `DataProvider` and the pure functions in `app/src/lib`.

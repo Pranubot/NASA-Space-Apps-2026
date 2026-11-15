@@ -84,7 +84,7 @@ libration takes it below the ridge line.
 
 | Source | Used for |
 |---|---|
-| [JPL Horizons](https://ssd.jpl.nasa.gov/horizons/) (DE441) | Sub-Earth and sub-solar points on the Moon and both distances, hourly, 1 Nov 2026 to 1 Jan 2029 |
+| [JPL Horizons](https://ssd.jpl.nasa.gov/horizons/) (DE441) | Sub-Earth and sub-solar points on the Moon and both distances, hourly, 1 Nov 2026 to 1 Jan 2031 |
 | [LOLA GDR](https://pds-geosciences.wustl.edu/missions/lro/lola.htm) `LDEM_80S_80M`, `LDEM_64`, `LDEM_16` | Terrain horizons, the shadow map, 3D terrain |
 | [NASA SVS CGI Moon Kit](https://svs.gsfc.nasa.gov/4720) and Blue Marble | Whole-Moon map, opening sequence, Earth in the 3D sky |
 | [LROC Quickmap](https://quickmap.lroc.asu.edu/), [Moon Trek](https://trek.nasa.gov/moon/) | Linked from every site for cross-checking |
