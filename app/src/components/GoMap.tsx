@@ -8,6 +8,7 @@
 // Cells sit on a fixed lattice (400 m x 2^k) so panning and zooming reuse earlier work.
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { MAP_HORIZON, elevationFn, raycastHorizon } from "../data/dem";
 import type { Dataset, HorizonProfile, PolarGrid, Site } from "../data/types";
 import { R_MOON_KM, deg } from "../lib/astro";
@@ -72,8 +73,12 @@ function scoreCell(cell: Cell, grid: PolarGrid, ds: Dataset, startMs: number, da
 }
 
 export function GoMap({
-  grid, view, w, h, scale, cursor,
-}: { grid: PolarGrid; view: MapView; w: number; h: number; scale: number; cursor: readonly [number, number] | null }) {
+  grid, view, w, h, scale, cursor, readSlot,
+}: {
+  grid: PolarGrid; view: MapView; w: number; h: number; scale: number; cursor: readonly [number, number] | null;
+  /** strip above the map where the readout goes, so pins and markers never cover it */
+  readSlot: HTMLDivElement | null;
+}) {
   const ds = useStore((s) => s.dataset);
   const placing = useStore((s) => s.placing);
   const startMs = useStore((s) => s.startMs);
@@ -137,6 +142,7 @@ export function GoMap({
   return (
     <>
       <canvas ref={canvas} className="map__canvas gomap" style={{ width: w, height: h }} />
+      {readSlot && createPortal(
       <div className="gomap__read" title="Each square is scored as a landing site on the 400 m LOLA grid. Approximate: curated sites use finer terrain.">
         {hit ? (
           <>
@@ -156,7 +162,9 @@ export function GoMap({
             </span>
           </>
         )}
-      </div>
+      </div>,
+        readSlot,
+      )}
     </>
   );
 }
