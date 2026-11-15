@@ -6,6 +6,7 @@
 
 import { OrbitControls, Stars, useTexture } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Check, EllipsisVertical } from "lucide-react";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
@@ -327,8 +328,64 @@ function CameraRig({ mode, inst, sizeKm, nonce }: { mode: CamMode; inst: Instant
   );
 }
 
+const RELIEF = [
+  { value: 1, label: "True scale" },
+  { value: 2, label: "×2 vertical" },
+  { value: 3, label: "×3 vertical" },
+];
+
+/** Vertical exaggeration, tucked behind a kebab button in the bottom-right corner. */
+function ReliefMenu({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const [open, setOpen] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      if (!root.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("pointerdown", onDown);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <div className="kebab" ref={root}>
+      {open && (
+        <div className="kebab__menu" role="menu" aria-label="Relief">
+          <span className="kebab__title">Relief</span>
+          {RELIEF.map((r) => (
+            <button
+              key={r.value} type="button" role="menuitemradio" aria-checked={value === r.value}
+              className={value === r.value ? "is-on" : ""}
+              onClick={() => {
+                onChange(r.value);
+                setOpen(false);
+              }}
+            >
+              <Check size={13} className="kebab__check" aria-hidden />
+              {r.label}
+            </button>
+          ))}
+        </div>
+      )}
+      <button
+        type="button" className="iconbtn kebab__btn" aria-haspopup="menu" aria-expanded={open}
+        aria-label={`Relief: ${RELIEF.find((r) => r.value === value)?.label}`} title="Relief" onClick={() => setOpen((o) => !o)}
+      >
+        <EllipsisVertical size={16} />
+      </button>
+    </div>
+  );
+}
+
 export default function Terrain3D({ data, inst }: { data: SiteData; inst: Instant }) {
   const ds = useStore((s) => s.dataset);
+  const simple = useStore((s) => s.simple);
   const [patch, setPatch] = useState<TerrainPatch | null>(null);
   const [exag, setExag] = useState(1);
   const [contours, setContours] = useState(false);
@@ -388,19 +445,12 @@ export default function Terrain3D({ data, inst }: { data: SiteData; inst: Instan
             Lander view
           </button>
         </div>
-        <label className="field field--inline">
-          <span>Relief</span>
-          <select value={exag} onChange={(e) => setExag(Number(e.target.value))} aria-label="Vertical exaggeration">
-            <option value={1}>True scale</option>
-            <option value={2}>×2 vertical</option>
-            <option value={3}>×3 vertical</option>
-          </select>
-        </label>
-        <label className="check">
-          <input type="checkbox" checked={contours} onChange={(e) => setContours(e.target.checked)} /> 250 m contours
+        <label className="check" title="Elevation lines every 250 m">
+          <input type="checkbox" checked={contours} onChange={(e) => setContours(e.target.checked)} /> Contours
         </label>
       </div>
-      {patch && (
+      <ReliefMenu value={exag} onChange={setExag} />
+      {patch && !simple && (
         <p className="t3d__caption">
           <span className="num">{Math.round(sizeKm)} km</span> square · {patch.source} · shadows ray-marched from the Sun at this instant · Sun and Earth drawn ×3 size
         </p>

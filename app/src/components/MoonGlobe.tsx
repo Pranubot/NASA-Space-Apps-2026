@@ -196,6 +196,8 @@ export function MoonGlobe() {
       className="map__view map__view--globe" ref={ref}
       onWheel={(e) => setView((v) => ({ ...v, zoom: clamp(v.zoom * Math.pow(1.0016, -e.deltaY), 1, 6) }))}
       onPointerDown={(e) => {
+        // let the zoom buttons receive their own click instead of starting a turn
+        if ((e.target as Element).closest("button")) return;
         e.currentTarget.setPointerCapture(e.pointerId);
         cancelAnimationFrame(tween.current);
         drag.current = { x: e.clientX, y: e.clientY, lat: view.lat, lon: view.lon, moved: false };
@@ -251,11 +253,6 @@ export function MoonGlobe() {
       )}
       {tip && <SiteTip tip={tip} w={w} h={h} />}
       <div className="map__tools">
-        <div className="seg seg--small" role="group" aria-label="Turn the globe to">
-          <button type="button" onClick={() => turnTo(0, 0)} title="The side that always faces Earth">Near side</button>
-          <button type="button" onClick={() => turnTo(0, 180)} title="The side that never sees Earth">Far side</button>
-          <button type="button" onClick={() => turnTo(-90, view.lon)} title="Look straight down on the south pole">Pole</button>
-        </div>
         <div className="iconrow">
           <button type="button" className="iconbtn" onClick={() => setView((v) => ({ ...v, zoom: clamp(v.zoom * 1.6, 1, 6) }))} aria-label="Zoom in"><Plus size={14} /></button>
           <button type="button" className="iconbtn" onClick={() => setView((v) => ({ ...v, zoom: clamp(v.zoom / 1.6, 1, 6) }))} aria-label="Zoom out"><Minus size={14} /></button>
