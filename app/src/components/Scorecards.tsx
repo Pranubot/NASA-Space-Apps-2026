@@ -18,11 +18,15 @@ export function VerdictIcon({ v, size = 14 }: { v: Verdict; size?: number }) {
   return <CircleX size={size} color={color} aria-hidden />;
 }
 
-export function VerdictChip({ v }: { v: Verdict }) {
+/** Verdict chip. `iconOnly` drops the word (kept for hover and screen readers) where columns are narrow. */
+export function VerdictChip({ v, iconOnly = false }: { v: Verdict; iconOnly?: boolean }) {
   return (
-    <span className={`verdict verdict--${v === "NO-GO" ? "nogo" : v.toLowerCase()}`} title={VERDICT_HINT[v]}>
-      <VerdictIcon v={v} size={12} />
-      {VERDICT_LABEL[v]}
+    <span
+      className={`verdict verdict--${v === "NO-GO" ? "nogo" : v.toLowerCase()}${iconOnly ? " verdict--icon" : ""}`}
+      title={iconOnly ? `${VERDICT_LABEL[v]}: ${VERDICT_HINT[v].toLowerCase()}` : VERDICT_HINT[v]}
+    >
+      <VerdictIcon v={v} size={iconOnly ? 14 : 12} />
+      {iconOnly ? <span className="sr-only">{VERDICT_LABEL[v]}</span> : VERDICT_LABEL[v]}
     </span>
   );
 }
@@ -111,7 +115,7 @@ export function Scorecards() {
                     )}
                   </div>
                   <span className="compare__meta">{CATEGORY_LABEL[d.site.category]}</span>
-                  <VerdictChip v={d.evaluation.overall} />
+                  <VerdictChip v={d.evaluation.overall} iconOnly />
                   {d.evaluation.overall !== "GO" && <span className="compare__driver">{d.evaluation.driver.label}</span>}
                 </th>
               ))}

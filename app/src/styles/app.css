@@ -608,6 +608,11 @@ input[type="checkbox"] {
   letter-spacing: 0.02em;
   white-space: nowrap;
 }
+.verdict--icon {
+  width: 26px;
+  padding: 0;
+  justify-content: center;
+}
 .verdict--go {
   color: var(--both);
   background: rgba(61, 220, 151, 0.12);
