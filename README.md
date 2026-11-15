@@ -23,7 +23,7 @@ Other commands, all from `app/`:
 |---|---|
 | `npm test` | 23 unit tests on the astronomy, visibility and verdict maths, checked against the shipped Horizons data |
 | `npm run build` | Type-check and build the static site into `app/dist` |
-| `VITE_DATA_PROVIDER=mock npm run dev` | Run with no data files (analytic ephemeris, procedural terrain, "Mock data" badge) |
+| `VITE_DATA_PROVIDER=mock npm run dev` | Run with no data files (analytic ephemeris, procedural terrain, "Mock data" warning) |
 
 Requires Node 22 or newer (built with Node 24). The NASA-derived data (16 MB) is already in `app/public/data`.
 
@@ -132,7 +132,7 @@ its rim averages over 55%.
   treat it as a guide to where to look, then open the spot for the finer calculation.
 - Custom coordinates use coarser grids in the browser: 400 m at the pole, about 7.6 km elsewhere.
 - Outside the published date range the app falls back to an analytic lunar model (Meeus), good to
-  about 0.5°, and shows an "Approximate" badge.
+  about 0.5°, and shows an "Approximate" warning in the top bar.
 - Science values (1 to 5) are assigned by our team for the trade view. They are not NASA ratings.
 - No thermal model, relay satellites or surface mobility.
 - The Moon Trek link uses its URL-hash view format; Quickmap has no stable deep link, so that link
