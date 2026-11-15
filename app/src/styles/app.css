@@ -1134,9 +1134,22 @@ input[type="checkbox"] {
 /* ------------------------------------------------------------------ readouts */
 
 .readouts {
+  position: relative;
+  z-index: 6;
   flex: none;
   border-top: 1px solid var(--line);
   container-type: inline-size;
+}
+/* the details rise up over the sky instead of pushing it, so the view never resizes */
+.readouts__more {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  background: var(--panel);
+  border-top: 1px solid var(--line-strong);
+  box-shadow: 0 -16px 28px -14px rgba(0, 0, 0, 0.9);
+  animation: sheet-up 200ms var(--ease);
 }
 /* one line with the Sun, Earth and Power decisions; the whole line is the toggle */
 .readouts__bar {
@@ -1150,9 +1163,6 @@ input[type="checkbox"] {
   text-align: left;
   white-space: nowrap;
   transition: background var(--fast) var(--ease);
-}
-.readouts.is-open .readouts__bar {
-  border-bottom: 1px solid var(--line);
 }
 .readouts__bar:hover {
   background: var(--panel-2);
@@ -2320,6 +2330,8 @@ kbd {
 }
 
 .answer {
+  position: relative;
+  z-index: 6;
   flex: none;
   border-bottom: 1px solid var(--line);
 }
@@ -2351,8 +2363,29 @@ kbd {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* the details drop down over the sky instead of pushing it, so the view never resizes */
 .answer__more {
-  padding: 0 14px 11px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  padding: 0 14px 12px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line-strong);
+  box-shadow: 0 16px 28px -14px rgba(0, 0, 0, 0.9);
+  animation: sheet-down 200ms var(--ease);
+}
+@keyframes sheet-down {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes sheet-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
 }
 .answer__why {
   margin: 0;
@@ -2374,6 +2407,13 @@ button:hover > .disclosure {
 }
 [aria-expanded="true"] > .disclosure {
   transform: rotate(180deg);
+}
+/* for panels that pull up from the bottom: points up when folded, down when open */
+.disclosure--up {
+  transform: rotate(180deg);
+}
+[aria-expanded="true"] > .disclosure--up {
+  transform: none;
 }
 .answer__facts {
   display: grid;

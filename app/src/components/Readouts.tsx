@@ -126,10 +126,11 @@ export function Readouts({ data, inst }: { data: SiteData; inst: Instant }) {
           <Zap size={14} aria-hidden /> <b>Power</b> <span className="num">{Math.round(inst.powerW)} W</span>
           <span className="sum__when">{powerWord}</span>
         </span>
-        <ChevronDown size={16} className="disclosure" aria-hidden />
+        <ChevronDown size={16} className="disclosure disclosure--up" aria-hidden />
       </button>
       {open && (
-        <>
+        // opens upward over the sky, so the view above does not resize
+        <div className="readouts__more">
           <div className="readouts__row">
             <section className="ro ro--sun" aria-label="Sun">
               <BodyLens horizon={data.horizon} az={inst.sunAz} el={inst.sunEl} r={inst.sunR} fov={2.4} body="sun" />
@@ -184,7 +185,7 @@ export function Readouts({ data, inst }: { data: SiteData; inst: Instant }) {
             </section>
           </div>
           <p className="narration">{text}</p>
-        </>
+        </div>
       )}
     </div>
   );
