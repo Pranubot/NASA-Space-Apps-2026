@@ -4,7 +4,7 @@ import { GripVertical, Plus, Search, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { customElevation } from "../data/dataset";
 import type { Site, SiteCategory } from "../data/types";
-import { CATEGORY_LABEL } from "../lib/theme";
+import { CATEGORY_LABEL, VERDICT_LABEL } from "../lib/theme";
 import { fmtLatLon } from "../lib/time";
 import { useAllSummaries, type SiteSummary } from "../hooks/useSiteData";
 import { useSiteDrag } from "../hooks/useSiteDrag";
@@ -84,9 +84,9 @@ function SiteRow({
         </span>
       </button>
       {sum ? (
-        <span className="site__verdict" title={`${sum.evaluation.overall}: ${sum.evaluation.driver.reason}`}>
+        <span className="site__verdict" title={`${VERDICT_LABEL[sum.evaluation.overall]}: ${sum.evaluation.driver.reason}`}>
           <VerdictIcon v={sum.evaluation.overall} size={15} />
-          <span className="sr-only">{sum.evaluation.overall}</span>
+          <span className="sr-only">{VERDICT_LABEL[sum.evaluation.overall]}</span>
         </span>
       ) : (
         <span className="site__verdict site__verdict--pending" title="Computing horizon" />
@@ -143,7 +143,6 @@ export function SiteList() {
           ))}
         </div>
       </div>
-      <p className="sitelist__hint">Drag a site onto the timeline to compare it.</p>
       <ul className="sitelist__items">
         {shown.map((s) => {
           const isSel = selected.includes(s.id);

@@ -12,6 +12,7 @@ import { MAP_HORIZON, elevationFn, raycastHorizon } from "../data/dem";
 import type { Dataset, HorizonProfile, PolarGrid, Site } from "../data/types";
 import { R_MOON_KM, deg } from "../lib/astro";
 import { evaluate, type Verdict } from "../lib/scenario";
+import { VERDICT_HINT, VERDICT_LABEL } from "../lib/theme";
 import { DAY, fmtLatLon } from "../lib/time";
 import { applyConstraints, buildGeometry, computeMetrics, type Constraints } from "../lib/visibility";
 import { useSay, useStore } from "../state/store";
@@ -138,7 +139,7 @@ export function GoMap({
       <div className="gomap__read" title="Each square is scored as a landing site on the 400 m LOLA grid. Approximate: curated sites use finer terrain.">
         {hit ? (
           <>
-            <span className="gomap__key"><VerdictIcon v={hit.verdict} size={12} /><strong>{say(hit.verdict)}</strong> <span className="num">{fmtLatLon(hit.lat, hit.lon)}</span></span>
+            <span className="gomap__key"><VerdictIcon v={hit.verdict} size={12} /><strong>{VERDICT_LABEL[hit.verdict]}</strong> <span className="num">{fmtLatLon(hit.lat, hit.lon)}</span></span>
             <span><span className="num">{hit.bothH.toFixed(1)} h</span> a day {say("power + comms")} · longest night <span className="num">{Math.round(hit.darkH)} h</span></span>
             <span className="gomap__dim">Double-click to open this spot</span>
           </>
@@ -146,7 +147,7 @@ export function GoMap({
           <>
             <span className="gomap__key">
               {(["GO", "MARGINAL", "NO-GO"] as const).map((v) => (
-                <span key={v}><VerdictIcon v={v} size={12} />{say(v)}</span>
+                <span key={v} title={VERDICT_HINT[v]}><VerdictIcon v={v} size={12} />{VERDICT_LABEL[v]}</span>
               ))}
             </span>
             <span className="gomap__dim">

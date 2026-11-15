@@ -17,6 +17,39 @@ export type AnalysisTab = "slip" | "dates" | "trade";
 export type Drawer = null | "guide" | "sources";
 export type InspectorTab = "compare" | "limits" | "whatif";
 
+/** Which collapsible panels are open. Collapsed panels give the sky view more room. */
+export interface Panels {
+  /** the Compare / Limits / What if panel on the right */
+  inspector: boolean;
+  /** full verdict summary above the sky (the one-line decision always shows) */
+  answer: boolean;
+  /** full Sun / Earth / Power readouts below the sky (the one-line decisions always show) */
+  readouts: boolean;
+}
+
+export const OPEN_PANELS: Panels = { inspector: true, answer: true, readouts: true };
+const DEFAULT_PANELS: Panels = { inspector: true, answer: false, readouts: false };
+const PANELS_KEY = "lsn.panels";
+
+/** Panel layout is a per-viewer convenience: remembered in this browser, never in shared links. */
+function loadPanels(): Panels {
+  try {
+    const raw = window.localStorage.getItem(PANELS_KEY);
+    if (raw) return { ...DEFAULT_PANELS, ...(JSON.parse(raw) as Partial<Panels>) };
+  } catch {
+    // storage blocked or corrupt: fall back to the defaults
+  }
+  return DEFAULT_PANELS;
+}
+
+function savePanels(p: Panels) {
+  try {
+    window.localStorage.setItem(PANELS_KEY, JSON.stringify(p));
+  } catch {
+    // not fatal: the layout just won't be remembered
+  }
+}
+
 /** A site being dragged from the bin, and what dropping it here would do. */
 export interface DragState {
   id: string;
@@ -59,6 +92,7 @@ interface State extends ScenarioState {
   mapRegion: MapRegion;
   analysisTab: AnalysisTab;
   inspectorTab: InspectorTab;
+  panels: Panels;
   drag: DragState | null;
   drawer: Drawer;
   introOpen: boolean;
@@ -73,6 +107,7 @@ interface State extends ScenarioState {
   replaceTrack(oldId: string, newId: string): void;
   setDrag(d: DragState | null): void;
   setInspectorTab(t: InspectorTab): void;
+  togglePanel(k: keyof Panels): void;
   focus(id: string): void;
   setStart(ms: number, keepOffset?: boolean): void;
   setDays(d: number): void;
@@ -136,6 +171,7 @@ export const useStore = create<State>((set, get) => ({
   mapRegion: "polar",
   analysisTab: "slip",
   inspectorTab: "compare",
+  panels: loadPanels(),
   drag: null,
   drawer: null,
   introOpen: true,
@@ -182,6 +218,12 @@ export const useStore = create<State>((set, get) => ({
 
   setDrag: (drag) => set({ drag }),
   setInspectorTab: (inspectorTab) => set({ inspectorTab }),
+  togglePanel: (k) =>
+    set((s) => {
+      const panels = { ...s.panels, [k]: !s.panels[k] };
+      savePanels(panels);
+      return { panels };
+    }),
 
   focus: (id) =>
     set((s) => {
@@ -273,7 +315,6 @@ export function findSite(s: Pick<State, "dataset" | "customSites">, id: string):
 
 /** Plain words for Simple mode. Keys are the exact Expert labels; anything not listed stays as is. */
 const PLAIN: Record<string, string> = {
-  MARGINAL: "CLOSE CALL",
   "Power + comms": "Work + talk home",
   "power + comms": "work + talk home",
   "Power + comms needed": "Work + talk home needed",

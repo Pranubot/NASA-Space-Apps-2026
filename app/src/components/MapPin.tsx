@@ -4,7 +4,7 @@
 import type { Site } from "../data/types";
 import { clamp } from "../lib/astro";
 import type { Verdict } from "../lib/scenario";
-import { CATEGORY_LABEL, COLOR, FONT_UI, VERDICT_COLOR } from "../lib/theme";
+import { CATEGORY_LABEL, COLOR, FONT_UI, VERDICT_COLOR, VERDICT_LABEL } from "../lib/theme";
 import { fmtLatLon } from "../lib/time";
 import { useSiteDrag } from "../hooks/useSiteDrag";
 
@@ -32,7 +32,7 @@ export function Pin({
         drag.onPointerDown(e);
       }}
       onClick={onClick} role="button" tabIndex={0}
-      aria-label={`${site.name}${verdict ? `, ${verdict}` : ""}`}
+      aria-label={`${site.name}${verdict ? `, ${VERDICT_LABEL[verdict]}` : ""}`}
       onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onClick()}
     >
       <circle r={12} fill="transparent" />

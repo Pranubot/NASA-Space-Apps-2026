@@ -154,6 +154,9 @@ a:hover {
   gap: 1px;
   min-height: 0;
 }
+.main--wide {
+  grid-template-columns: clamp(264px, 20.5vw, 328px) minmax(0, 1fr) 36px;
+}
 
 .rail {
   display: flex;
@@ -183,9 +186,37 @@ a:hover {
 }
 .inspector__tabs {
   flex: none;
-  padding-left: 4px;
+  padding: 0 4px;
   border-bottom: 1px solid var(--line);
   display: flex;
+  align-items: center;
+}
+.inspector__collapse {
+  margin-left: auto;
+}
+.inspector--collapsed {
+  align-items: stretch;
+}
+.inspector__rail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding-top: 11px;
+  color: var(--text-2);
+  transition: background var(--fast) var(--ease), color var(--fast) var(--ease);
+}
+.inspector__rail:hover {
+  background: var(--panel-2);
+  color: var(--text);
+}
+.inspector__rail-label {
+  writing-mode: vertical-rl;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: pre;
 }
 .inspector__body {
   flex: 1 1 0;
@@ -783,7 +814,7 @@ input[type="checkbox"] {
   right: 8px;
   bottom: 8px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: flex-end;
   pointer-events: none;
 }
@@ -867,11 +898,6 @@ input[type="checkbox"] {
 .sitelist__top .btn {
   height: 30px;
   padding: 0 9px;
-}
-.sitelist__hint {
-  padding: 0 12px 7px;
-  color: var(--text-3);
-  font-size: 11px;
 }
 .site__grip {
   flex: none;
@@ -1090,10 +1116,69 @@ input[type="checkbox"] {
 .t3d__tools .field {
   padding: 3px 8px;
 }
+.kebab {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+.kebab__btn {
+  background: var(--overlay);
+}
+.kebab__btn[aria-expanded="true"] {
+  background: var(--panel-3);
+  color: var(--text);
+}
+.kebab__menu {
+  display: grid;
+  min-width: 148px;
+  padding: 4px;
+  border-radius: var(--r);
+  background: #111111;
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 10px 28px -8px rgba(0, 0, 0, 0.8);
+}
+.kebab__title {
+  padding: 4px 8px 5px;
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 600;
+}
+.kebab__menu button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 4px;
+  color: var(--text-2);
+  font-size: 12.5px;
+  text-align: left;
+}
+.kebab__menu button:hover {
+  background: var(--panel-3);
+  color: var(--text);
+}
+.kebab__menu button.is-on {
+  color: var(--text);
+}
+.kebab__check {
+  visibility: hidden;
+}
+.kebab__menu button.is-on .kebab__check {
+  visibility: visible;
+}
 .t3d__caption {
   position: absolute;
   left: 12px;
+  right: 56px;
   bottom: 9px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: var(--text-2);
   font-size: 11px;
   text-shadow: 0 1px 3px #000;
@@ -1103,9 +1188,68 @@ input[type="checkbox"] {
 /* ------------------------------------------------------------------ readouts */
 
 .readouts {
+  position: relative;
+  z-index: 6;
   flex: none;
   border-top: 1px solid var(--line);
   container-type: inline-size;
+}
+/* the details rise up over the sky instead of pushing it, so the view never resizes */
+.readouts__more {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  background: var(--panel);
+  border-top: 1px solid var(--line-strong);
+  box-shadow: 0 -16px 28px -14px rgba(0, 0, 0, 0.9);
+  animation: sheet-up 200ms var(--ease);
+}
+/* one line with the Sun, Earth and Power decisions; the whole line is the toggle */
+.readouts__bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  min-height: 40px;
+  padding: 0 12px 0 14px;
+  font-size: 13px;
+  text-align: left;
+  white-space: nowrap;
+  transition: background var(--fast) var(--ease);
+}
+.readouts__bar:hover {
+  background: var(--panel-2);
+}
+.sum {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--text-2);
+}
+.sum > svg {
+  flex: none;
+  color: var(--text-3);
+}
+.sum b {
+  color: var(--text);
+  font-weight: 650;
+}
+.sum--sun > svg {
+  color: var(--sun);
+}
+.sum--earth > svg {
+  color: var(--earth);
+}
+.sum--both > svg {
+  color: var(--both);
+}
+.sum__when {
+  color: var(--text-3);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 @container (max-width: 800px) {
   .ro .lens {
@@ -2240,23 +2384,90 @@ kbd {
 }
 
 .answer {
+  position: relative;
+  z-index: 6;
   flex: none;
-  padding: 10px 14px 11px;
   border-bottom: 1px solid var(--line);
 }
+/* one-line decision; the whole line is the toggle */
 .answer__head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 12px 0 14px;
+  color: var(--text-2);
+  font-size: 13px;
+  text-align: left;
+  white-space: nowrap;
+  transition: background var(--fast) var(--ease);
+}
+.answer__head:hover {
+  background: var(--panel-2);
+}
+.answer__head strong {
+  color: var(--text);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.answer__decision {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* the details drop down over the sky instead of pushing it, so the view never resizes */
+.answer__more {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  padding: 0 14px 12px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line-strong);
+  box-shadow: 0 16px 28px -14px rgba(0, 0, 0, 0.9);
+  animation: sheet-down 200ms var(--ease);
+}
+@keyframes sheet-down {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes sheet-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.answer__why {
   margin: 0;
   color: var(--text-2);
   font-size: 13px;
   line-height: 1.5;
   text-wrap: pretty;
 }
-.answer__head .verdict {
-  margin-right: 8px;
-  vertical-align: 1px;
+
+/* shared disclosure arrow: points down when folded, flips up when open */
+.disclosure {
+  flex: none;
+  margin-left: auto;
+  color: var(--text-3);
+  transition: transform var(--fast) var(--ease), color var(--fast) var(--ease);
 }
-.answer__head strong {
+button:hover > .disclosure {
   color: var(--text);
+}
+[aria-expanded="true"] > .disclosure {
+  transform: rotate(180deg);
+}
+/* for panels that pull up from the bottom: points up when folded, down when open */
+.disclosure--up {
+  transform: rotate(180deg);
+}
+[aria-expanded="true"] > .disclosure--up {
+  transform: none;
 }
 .answer__facts {
   display: grid;

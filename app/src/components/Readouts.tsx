@@ -1,7 +1,7 @@
 // Live numbers under the hero view: Sun, Earth and power at the cursor, with countdowns and a
 // true-scale close-up of each disc against the terrain line.
 
-import { Earth as EarthIcon, Sun as SunIcon, Zap } from "lucide-react";
+import { ChevronDown, Earth as EarthIcon, Sun as SunIcon, Zap } from "lucide-react";
 import { useId, useMemo } from "react";
 import type { HorizonProfile } from "../data/types";
 import { earthPhase, separation } from "../lib/astro";
@@ -82,11 +82,19 @@ function Countdown({ nc, tMs, upLabel, downLabel }: { nc: NextChange; tMs: numbe
   );
 }
 
+/** "sets in 9d 12h" / "rises in 2h 05m"; "all mission" / "not this mission" when it never changes. */
+function until(nc: NextChange, tMs: number, setWord: string, riseWord: string): string {
+  if (nc.atMs === null) return nc.up ? "all mission" : "not this mission";
+  return `${nc.up ? setWord : riseWord} in ${fmtDuration((nc.atMs - tMs) / HOUR)}`;
+}
+
 const signed = (v: number, d = 2) => `${v >= 0 ? "+" : "−"}${Math.abs(v).toFixed(d)}°`;
 
 export function Readouts({ data, inst }: { data: SiteData; inst: Instant }) {
   const c = useStore((s) => s.constraints);
   const simple = useStore((s) => s.simple);
+  const open = useStore((s) => s.panels.readouts);
+  const togglePanel = useStore((s) => s.togglePanel);
   const say = useSay();
   const { geom } = data;
   const sunNext = useMemo(() => nextChange(geom, sunMargin(geom, c), inst.tMs), [geom, c, inst.tMs]);
@@ -98,62 +106,87 @@ export function Readouts({ data, inst }: { data: SiteData; inst: Instant }) {
   const text = narrate(data.site, inst, sunNext, earthNext, data.metrics.earthPct === 0, simple);
   const powerPct = Math.round((inst.powerW / c.panelW) * 100);
 
+  // one-line decisions, always visible
+  const sunWord = inst.sunFrac >= 0.999 ? "Up" : inst.sunFrac > 0.001 ? `${Math.round(inst.sunFrac * 100)}% visible` : "Down";
+  const earthWord = inst.earthVisible ? "In view" : "Blocked";
+  const powerWord = say(inst.both ? "Power + comms" : inst.lit ? "Power only" : inst.earthVisible ? "Comms only" : "Neither");
+
   return (
-    <div className="readouts">
-      <div className="readouts__row">
-        <section className="ro ro--sun" aria-label="Sun">
-          <BodyLens horizon={data.horizon} az={inst.sunAz} el={inst.sunEl} r={inst.sunR} fov={2.4} body="sun" />
-          <div className="ro__body">
-            <h3>
-              <SunIcon size={14} /> Sun
-              <span className={`state ${inst.lit ? "state--sun" : "state--off"}`}>
-                {inst.sunFrac >= 0.999 ? "Full disc" : inst.sunFrac > 0.001 ? `${Math.round(inst.sunFrac * 100)}% of disc` : "Not visible"}
-              </span>
-              <span className="ro__az num x-expert" title="Azimuth, clockwise from north">{inst.sunAz.toFixed(1)}° {cardinal(inst.sunAz)}</span>
-            </h3>
-            <dl className="kv">
-              <Countdown nc={sunNext} tMs={inst.tMs} upLabel="Sunset in" downLabel="Sunrise in" />
-              <div className="x-expert"><dt>Elevation</dt><dd className="num">{signed(inst.sunEl)}</dd></div>
-              <div className="x-expert" title="Sun centre minus the terrain horizon at its azimuth"><dt>Clearance</dt><dd className="num">{signed(inst.sunClear)}</dd></div>
-            </dl>
-          </div>
-        </section>
+    <div className={`readouts${open ? " is-open" : ""}`}>
+      <button type="button" className="readouts__bar" onClick={() => togglePanel("readouts")} aria-expanded={open} title={open ? "Hide the details" : "Show angles, close-ups and a plain-language summary"}>
+        <span className={`sum${inst.lit ? " sum--sun" : ""}`}>
+          <SunIcon size={14} aria-hidden /> <b>Sun</b> {sunWord}
+          <span className="sum__when num">{until(sunNext, inst.tMs, "sets", "rises")}</span>
+        </span>
+        <span className={`sum${inst.earthVisible ? " sum--earth" : ""}`}>
+          <EarthIcon size={14} aria-hidden /> <b>Earth</b> {earthWord}
+          <span className="sum__when num">{until(earthNext, inst.tMs, "sets", "rises")}</span>
+        </span>
+        <span className={`sum${inst.both ? " sum--both" : inst.lit ? " sum--sun" : ""}`}>
+          <Zap size={14} aria-hidden /> <b>Power</b> <span className="num">{Math.round(inst.powerW)} W</span>
+          <span className="sum__when">{powerWord}</span>
+        </span>
+        <ChevronDown size={16} className="disclosure disclosure--up" aria-hidden />
+      </button>
+      {open && (
+        // opens upward over the sky, so the view above does not resize
+        <div className="readouts__more">
+          <div className="readouts__row">
+            <section className="ro ro--sun" aria-label="Sun">
+              <BodyLens horizon={data.horizon} az={inst.sunAz} el={inst.sunEl} r={inst.sunR} fov={2.4} body="sun" />
+              <div className="ro__body">
+                <h3>
+                  <SunIcon size={14} /> Sun
+                  <span className={`state ${inst.lit ? "state--sun" : "state--off"}`}>
+                    {inst.sunFrac >= 0.999 ? "Full disc" : inst.sunFrac > 0.001 ? `${Math.round(inst.sunFrac * 100)}% of disc` : "Not visible"}
+                  </span>
+                  <span className="ro__az num x-expert" title="Azimuth, clockwise from north">{inst.sunAz.toFixed(1)}° {cardinal(inst.sunAz)}</span>
+                </h3>
+                <dl className="kv">
+                  <Countdown nc={sunNext} tMs={inst.tMs} upLabel="Sunset in" downLabel="Sunrise in" />
+                  <div className="x-expert"><dt>Elevation</dt><dd className="num">{signed(inst.sunEl)}</dd></div>
+                  <div className="x-expert" title="Sun centre minus the terrain horizon at its azimuth"><dt>Clearance</dt><dd className="num">{signed(inst.sunClear)}</dd></div>
+                </dl>
+              </div>
+            </section>
 
-        <section className="ro ro--earth" aria-label="Earth">
-          <BodyLens horizon={data.horizon} az={inst.earthAz} el={inst.earthEl} r={inst.earthR} fov={6} body="earth" phase={phase} phaseAngle={phaseAngle} />
-          <div className="ro__body">
-            <h3>
-              <EarthIcon size={14} /> Earth
-              <span className={`state ${inst.earthVisible ? "state--earth" : "state--off"}`}>
-                {inst.earthVisible ? "Direct link" : "No direct link"}
-              </span>
-              <span className="ro__az num x-expert" title="Azimuth, clockwise from north">{inst.earthAz.toFixed(1)}° {cardinal(inst.earthAz)}</span>
-            </h3>
-            <dl className="kv">
-              <Countdown nc={earthNext} tMs={inst.tMs} upLabel="Earthset in" downLabel="Earthrise in" />
-              <div className="x-expert"><dt>Elevation</dt><dd className="num">{signed(inst.earthEl)}</dd></div>
-              <div className="x-expert" title="Earth centre minus the terrain horizon at its azimuth"><dt>Clearance</dt><dd className="num">{signed(inst.earthClear)}</dd></div>
-            </dl>
-          </div>
-        </section>
+            <section className="ro ro--earth" aria-label="Earth">
+              <BodyLens horizon={data.horizon} az={inst.earthAz} el={inst.earthEl} r={inst.earthR} fov={6} body="earth" phase={phase} phaseAngle={phaseAngle} />
+              <div className="ro__body">
+                <h3>
+                  <EarthIcon size={14} /> Earth
+                  <span className={`state ${inst.earthVisible ? "state--earth" : "state--off"}`}>
+                    {inst.earthVisible ? "Direct link" : "No direct link"}
+                  </span>
+                  <span className="ro__az num x-expert" title="Azimuth, clockwise from north">{inst.earthAz.toFixed(1)}° {cardinal(inst.earthAz)}</span>
+                </h3>
+                <dl className="kv">
+                  <Countdown nc={earthNext} tMs={inst.tMs} upLabel="Earthset in" downLabel="Earthrise in" />
+                  <div className="x-expert"><dt>Elevation</dt><dd className="num">{signed(inst.earthEl)}</dd></div>
+                  <div className="x-expert" title="Earth centre minus the terrain horizon at its azimuth"><dt>Clearance</dt><dd className="num">{signed(inst.earthClear)}</dd></div>
+                </dl>
+              </div>
+            </section>
 
-        <section className="ro ro--power" aria-label="Power">
-          <div className="ro__body">
-            <h3>
-              <Zap size={14} /> Power
-              <span className={`state ${inst.both ? "state--both" : "state--off"}`}>{say(inst.both ? "Power + comms" : inst.lit ? "Power only" : inst.earthVisible ? "Comms only" : "Neither")}</span>
-            </h3>
-            <div className="power">
-              <span className="power__value num">{Math.round(inst.powerW)}</span>
-              <span className="power__unit">W of {c.panelW}</span>
-            </div>
-            <div className="meter" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={powerPct} aria-label="Array output">
-              <span style={{ width: `${powerPct}%` }} />
-            </div>
+            <section className="ro ro--power" aria-label="Power">
+              <div className="ro__body">
+                <h3>
+                  <Zap size={14} /> Power
+                  <span className={`state ${inst.both ? "state--both" : "state--off"}`}>{say(inst.both ? "Power + comms" : inst.lit ? "Power only" : inst.earthVisible ? "Comms only" : "Neither")}</span>
+                </h3>
+                <div className="power">
+                  <span className="power__value num">{Math.round(inst.powerW)}</span>
+                  <span className="power__unit">W of {c.panelW}</span>
+                </div>
+                <div className="meter" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={powerPct} aria-label="Array output">
+                  <span style={{ width: `${powerPct}%` }} />
+                </div>
+              </div>
+            </section>
           </div>
-        </section>
-      </div>
-      <p className="narration">{text}</p>
+          <p className="narration">{text}</p>
+        </div>
+      )}
     </div>
   );
 }

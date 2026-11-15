@@ -40,7 +40,6 @@ uniform float uScale;    // metres per canvas px
 uniform vec3 uSun;       // unit vector to the Sun, Moon-fixed (x: lon 0, y: lon 90E, z: north)
 uniform float uSunR;     // Sun angular radius, rad
 uniform float uLimit;    // map radius of the grid edge, metres
-uniform float uMode;     // 0 = live shadows, 1 = relief
 in vec2 vPx;
 out vec4 outColor;
 const float R = 1737400.0;
@@ -86,14 +85,6 @@ void main() {
 
   // fixed illustrative light so relief stays readable in permanent shadow
   float relief = clamp(dot(normalize(vec3(-dzdx * 2.2, -dzdy * 2.2, 1.0)), normalize(vec3(-0.5, 0.6, 0.62))), 0.0, 1.0);
-
-  if (uMode > 0.5) {
-    float t = clamp((h0 + 5000.0) / 12500.0, 0.0, 1.0);
-    vec3 lowC = vec3(0.09, 0.16, 0.34), midC = vec3(0.30, 0.38, 0.46), highC = vec3(0.86, 0.82, 0.72);
-    vec3 col = t < 0.5 ? mix(lowC, midC, t * 2.0) : mix(midC, highC, t * 2.0 - 1.0);
-    outColor = vec4(col * (0.35 + 0.85 * relief), 1.0);
-    return;
-  }
 
   // march towards the Sun; the ray gains t*tan(el) and the sphere falls away by t^2 / 2R
   float minClear = 1.0;
@@ -155,7 +146,7 @@ function initGl(canvas: HTMLCanvasElement, grid: PolarGrid): GlState | null {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     const u: GlState["u"] = {};
-    for (const name of ["uDem", "uN", "uPix", "uRes", "uCentre", "uScale", "uSun", "uSunR", "uLimit", "uMode"]) {
+    for (const name of ["uDem", "uN", "uPix", "uRes", "uCentre", "uScale", "uSun", "uSunR", "uLimit"]) {
       u[name] = gl.getUniformLocation(prog, name);
     }
     gl.uniform1i(u.uDem, 0);
@@ -193,7 +184,6 @@ export function SiteMap() {
 
   const [grid, setGrid] = useState<PolarGrid | null>(null);
   const [gridState, setGridState] = useState<"loading" | "ready" | "none">("loading");
-  const [mode, setMode] = useState<"shadows" | "relief">("shadows");
   const [view, setView] = useState({ cx: 0, cy: 0, half: POLAR_HALF_M * 1.04 });
   const [tip, setTip] = useState<Tip | null>(null);
   const [goMap, setGoMap] = useState(false);
@@ -241,11 +231,10 @@ export function SiteMap() {
     const la = rad(sub.sLat), lo = rad(sub.sLon);
     gl.uniform3f(u.uSun, Math.cos(la) * Math.cos(lo), Math.cos(la) * Math.sin(lo), Math.sin(la));
     gl.uniform1f(u.uSunR, Math.asin(695700 / sub.sunKm));
-    gl.uniform1f(u.uMode, mode === "relief" ? 1 : 0);
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-  }, [region, grid, w, h, view, scale, sub, mode]);
+  }, [region, grid, w, h, view, scale, sub]);
 
   // --- interaction ----------------------------------------------------------------------------
   const zoom = (factor: number, px = w / 2, py = h / 2) => {
@@ -316,6 +305,8 @@ export function SiteMap() {
         onWheel={(e) => region === "polar" && zoom(Math.pow(1.0018, e.deltaY), ...local(e))}
         onPointerDown={(e) => {
           if (region !== "polar") return;
+          // let the zoom buttons receive their own click instead of starting a pan
+          if ((e.target as Element).closest("button")) return;
           e.currentTarget.setPointerCapture(e.pointerId);
           drag.current = { x: e.clientX, y: e.clientY, cx: view.cx, cy: view.cy, moved: false };
         }}
@@ -410,14 +401,6 @@ export function SiteMap() {
         {tip && <SiteTip tip={tip} w={w} h={h} />}
         {region === "polar" && (
           <div className="map__tools">
-            <div className="seg seg--small" role="group" aria-label="Map shading">
-              <button type="button" className={mode === "shadows" ? "is-on" : ""} aria-pressed={mode === "shadows"} onClick={() => setMode("shadows")}>
-                Live shadows
-              </button>
-              <button type="button" className={mode === "relief" ? "is-on" : ""} aria-pressed={mode === "relief"} onClick={() => setMode("relief")}>
-                Elevation
-              </button>
-            </div>
             <div className="iconrow">
               <button type="button" className="iconbtn" onClick={() => zoom(1 / 1.7)} aria-label="Zoom in"><Plus size={14} /></button>
               <button type="button" className="iconbtn" onClick={() => zoom(1.7)} aria-label="Zoom out"><Minus size={14} /></button>
