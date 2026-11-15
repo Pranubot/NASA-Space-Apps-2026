@@ -201,9 +201,6 @@ export function Timeline() {
     <section className="panel timeline" aria-label="Timeline">
       <header className="panel__head">
         <h2>Timeline</h2>
-        <span className="panel__sub num">
-          {fmtDayMonth(t0)} to {fmtDayMonth(t1)} {new Date(t1).getUTCFullYear()}
-        </span>
         <div className="legend">
           <span><SunIcon size={12} color={COLOR.sun} /> Sun</span>
           <span><EarthIcon size={12} color={COLOR.earth} /> Earth</span>
@@ -263,7 +260,11 @@ export function Timeline() {
                   <i style={{ background: VERDICT_COLOR[d.evaluation.overall] }} />
                   {d.site.name}
                 </span>
-                <span className="tl-label__sub num" title={`${Math.round(d.metrics.bothPct)}% of the mission with ${say("power + comms")}`}>{Math.round(d.metrics.bothPct)}% {simple ? say("Both").toLowerCase() : "power + comms"}</span>
+                {!simple && (
+                  <span className="tl-label__sub num" title={`${Math.round(d.metrics.bothPct)}% of the mission with power and comms`}>
+                    {Math.round(d.metrics.bothPct)}% power + comms
+                  </span>
+                )}
               </button>
               {rows.length > 1 && (
                 <button type="button" className="tl-remove" onClick={() => toggle(d.site.id)} aria-label={`Remove the ${d.site.name} track`} title="Remove track">
