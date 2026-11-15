@@ -5,7 +5,7 @@ import { CircleCheck, CircleX, Copy, ExternalLink, TriangleAlert, X } from "luci
 import type { ReactNode } from "react";
 import { coordString, horizonsUrl, moonTrekUrl, QUICKMAP_URL } from "../lib/links";
 import type { Verdict } from "../lib/scenario";
-import { CATEGORY_LABEL, VERDICT_COLOR } from "../lib/theme";
+import { CATEGORY_LABEL, VERDICT_COLOR, VERDICT_HINT, VERDICT_LABEL } from "../lib/theme";
 import { fmtDuration } from "../lib/time";
 import type { SiteData } from "../hooks/useSiteData";
 import { useSelectedData } from "../hooks/useSiteData";
@@ -19,11 +19,10 @@ export function VerdictIcon({ v, size = 14 }: { v: Verdict; size?: number }) {
 }
 
 export function VerdictChip({ v }: { v: Verdict }) {
-  const say = useSay();
   return (
-    <span className={`verdict verdict--${v === "NO-GO" ? "nogo" : v.toLowerCase()}`}>
+    <span className={`verdict verdict--${v === "NO-GO" ? "nogo" : v.toLowerCase()}`} title={VERDICT_HINT[v]}>
       <VerdictIcon v={v} size={12} />
-      {say(v)}
+      {VERDICT_LABEL[v]}
     </span>
   );
 }

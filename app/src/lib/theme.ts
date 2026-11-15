@@ -20,6 +20,20 @@ export const COLOR = {
   bg: "#000000",
 } as const;
 
+/** What a verdict is called on screen. The same in Simple and Expert mode, so everyone reads one
+ *  word for one state. ("MARGINAL" stays the internal key.) */
+export const VERDICT_LABEL: Record<Verdict, string> = {
+  GO: "GO",
+  MARGINAL: "BORDERLINE",
+  "NO-GO": "NO-GO",
+};
+
+export const VERDICT_HINT: Record<Verdict, string> = {
+  GO: "Passes every limit with room to spare",
+  MARGINAL: "Passes, but within 20% of at least one limit",
+  "NO-GO": "Breaks at least one limit",
+};
+
 export const VERDICT_COLOR: Record<Verdict, string> = {
   GO: COLOR.both,
   MARGINAL: COLOR.marginal,

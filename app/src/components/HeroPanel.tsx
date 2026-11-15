@@ -5,10 +5,10 @@ import { Box, Mountain } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Suspense, lazy, useMemo } from "react";
 import { slipAnalysis, type Check } from "../lib/scenario";
-import { CATEGORY_LABEL } from "../lib/theme";
+import { CATEGORY_LABEL, VERDICT_LABEL } from "../lib/theme";
 import { fmtDayMonth, fmtLatLon } from "../lib/time";
 import { useInstant, useSelectedData, useSiteData, type SiteData } from "../hooks/useSiteData";
-import { SLIP_AFTER_DAYS, useSay, useStore } from "../state/store";
+import { SLIP_AFTER_DAYS, useStore } from "../state/store";
 import { HorizonPanorama } from "./HorizonPanorama";
 import { Readouts } from "./Readouts";
 import { VerdictChip, VerdictIcon } from "./Scorecards";
@@ -94,7 +94,7 @@ export function HeroPanel() {
   );
 }
 
-const HEADLINE = { GO: "Good to land here.", MARGINAL: "Close call.", "NO-GO": "Not safe to land here." };
+const HEADLINE = { GO: "Good to land here.", MARGINAL: "Borderline.", "NO-GO": "Not safe to land here." };
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? "" : "s"}`;
 
 /** The answer before the evidence: verdict, why, and the three numbers the planner asked for. */
@@ -102,7 +102,6 @@ function AnswerCard({ data }: { data: SiteData }) {
   const c = useStore((s) => s.constraints);
   const startMs = useStore((s) => s.startMs);
   const days = useStore((s) => s.days);
-  const say = useSay();
   const { site, metrics: m, evaluation: ev } = data;
   const check = (id: Check["id"]) => ev.checks.find((k) => k.id === id)!;
   // the first later landing day whose verdict differs from today's plan
@@ -131,9 +130,9 @@ function AnswerCard({ data }: { data: SiteData }) {
         <div>
           <dt>If the landing slips</dt>
           {change ? (
-            <dd><VerdictIcon v={change.verdict} size={13} />{say(change.verdict)} after {plural(change.offsetDays, "day")}</dd>
+            <dd><VerdictIcon v={change.verdict} size={13} />{VERDICT_LABEL[change.verdict]} after {plural(change.offsetDays, "day")}</dd>
           ) : (
-            <dd><VerdictIcon v={ev.overall} size={13} />Still {say(ev.overall)}</dd>
+            <dd><VerdictIcon v={ev.overall} size={13} />Still {VERDICT_LABEL[ev.overall]}</dd>
           )}
           <dd className="answer__sub">{change ? `landing ${fmtDayMonth(change.startMs)}` : `for at least ${SLIP_AFTER_DAYS} days`}</dd>
         </div>

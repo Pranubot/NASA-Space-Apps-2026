@@ -273,7 +273,6 @@ export function findSite(s: Pick<State, "dataset" | "customSites">, id: string):
 
 /** Plain words for Simple mode. Keys are the exact Expert labels; anything not listed stays as is. */
 const PLAIN: Record<string, string> = {
-  MARGINAL: "CLOSE CALL",
   "Power + comms": "Work + talk home",
   "power + comms": "work + talk home",
   "Power + comms needed": "Work + talk home needed",

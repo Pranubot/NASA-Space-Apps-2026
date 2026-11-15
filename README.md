@@ -46,7 +46,7 @@ Requires Node 22 or newer (built with Node 24). The NASA-derived data (16 MB) is
   three tracks, the panorama is the preview and the right-hand inspector shows one thing at a time
   (Compare, Limits, What if). Drag a site from the list or the map onto the timeline to add a track,
   or onto an existing track to replace it. The checkbox in the list does the same from the keyboard.
-- **Compare up to three sites** side by side, with GO / MARGINAL / NO-GO for each engineering and
+- **Compare up to three sites** side by side, with GO / BORDERLINE / NO-GO for each engineering and
   operations limit and the limit that decides the result named in a sentence.
 - **Mission limits** you can drag: battery survival, power-plus-comms hours per day, comms gap,
   antenna mask, Sun disc fraction, array rating and type. Every verdict updates as you drag.
@@ -121,7 +121,7 @@ its rim averages over 55%.
 - Power = rated power × visible disc fraction × cos(elevation) for a vertical tracking array, or
   × sin(elevation) for a flat panel.
 - Earth is in view when its centre clears the terrain by the antenna mask angle.
-- MARGINAL means within 20% of a limit.
+- BORDERLINE means the site passes but is within 20% of a limit.
 
 **Limits.**
 - Sites marked "approx." are region centres or planning estimates. At the pole, moving 1 km changes the
