@@ -143,7 +143,6 @@ export function SiteList() {
           ))}
         </div>
       </div>
-      <p className="sitelist__hint">Drag a site onto the timeline to compare it.</p>
       <ul className="sitelist__items">
         {shown.map((s) => {
           const isSel = selected.includes(s.id);
