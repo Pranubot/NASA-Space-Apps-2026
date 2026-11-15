@@ -103,9 +103,8 @@ function StarField() {
 }
 
 const LINES = [
-  "At the Moon's south pole the Sun never climbs more than about a degree and a half above the horizon.",
-  "A ridge ten kilometres away can switch a lander's power off. A two-week slip can put Earth out of sight.",
-  "Pick a site and a date, and see the sky you would get.",
+  "Explore lunar landing sites through solar illumination, Earth visibility, and mission feasibility.",
+  "Compare candidate sites, identify go/no-go zones, and discover the best operational windows for your mission — all within an interactive 3D environment.",
 ];
 
 export default function Intro() {
