@@ -36,6 +36,10 @@ function cachedFlags(g: Geometry, c: Constraints): Flags {
 /** Sampling step for the detailed series: finer for short missions so countdowns stay precise. */
 export const detailStepMin = (days: number) => (days <= 10 ? 15 : days <= 30 ? 30 : days <= 60 ? 60 : 120);
 
+/** Sampling step for every-site verdicts and the best-dates search. Hourly up to 90 days; above that
+ *  two-hourly, which keeps a year-long mission across all sites under about 100 ms. */
+export const summaryStepMin = (days: number) => (days <= 90 ? 60 : 120);
+
 export interface SiteData {
   site: Site;
   horizon: HorizonProfile;
@@ -109,7 +113,7 @@ export function useAllSummaries(): Map<string, SiteSummary> {
     for (const site of allSites({ dataset: ds, customSites: custom })) {
       const h = ds.horizon(site);
       if (!h) continue;
-      const g = cachedGeometry(ds, site, h, startMs, startMs + days * DAY, 60);
+      const g = cachedGeometry(ds, site, h, startMs, startMs + days * DAY, summaryStepMin(days));
       const metrics = computeMetrics(g, cachedFlags(g, c), 0, g.count - 1);
       out.set(site.id, { site, metrics, evaluation: evaluate(metrics, c) });
     }
@@ -133,7 +137,7 @@ export function useInstant(data: SiteData | null): Instant | null {
 export function yearGeometry(ds: Dataset, site: Site, startMs: number, days: number, searchDays: number): Geometry | null {
   const h = ds.horizon(site);
   if (!h) return null;
-  return cachedGeometry(ds, site, h, startMs, startMs + (searchDays + days) * DAY, 60);
+  return cachedGeometry(ds, site, h, startMs, startMs + (searchDays + days) * DAY, summaryStepMin(days));
 }
 
 export { cachedFlags };
