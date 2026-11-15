@@ -75,6 +75,7 @@ export function GoMap({
   grid, view, w, h, scale, cursor,
 }: { grid: PolarGrid; view: MapView; w: number; h: number; scale: number; cursor: readonly [number, number] | null }) {
   const ds = useStore((s) => s.dataset);
+  const placing = useStore((s) => s.placing);
   const startMs = useStore((s) => s.startMs);
   const days = useStore((s) => s.days);
   const c = useStore((s) => s.constraints);
@@ -141,7 +142,7 @@ export function GoMap({
           <>
             <span className="gomap__key"><VerdictIcon v={hit.verdict} size={12} /><strong>{VERDICT_LABEL[hit.verdict]}</strong> <span className="num">{fmtLatLon(hit.lat, hit.lon)}</span></span>
             <span><span className="num">{hit.bothH.toFixed(1)} h</span> a day {say("power + comms")} · longest night <span className="num">{Math.round(hit.darkH)} h</span></span>
-            <span className="gomap__dim">Double-click to open this spot</span>
+            {placing && <span className="gomap__dim">Click to add this spot as a site</span>}
           </>
         ) : (
           <>

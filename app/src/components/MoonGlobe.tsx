@@ -8,10 +8,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Site } from "../data/types";
 import { clamp, deg, rad, wrap180 } from "../lib/astro";
 import { COLOR, FONT_UI } from "../lib/theme";
-import { fmtLatLon } from "../lib/time";
 import { useAllSummaries } from "../hooks/useSiteData";
 import { useSize } from "../hooks/useApp";
 import { allSites, findSite, useStore } from "../state/store";
+import { AddSiteButton, PlacingHint } from "./AddSiteButton";
 import { Pin, SiteTip, type Tip } from "./MapPin";
 
 const DATA = `${import.meta.env.BASE_URL}data/`;
@@ -103,6 +103,8 @@ export function MoonGlobe() {
   const setHoverSite = useStore((s) => s.setHoverSite);
   const focus = useStore((s) => s.focus);
   const addCustom = useStore((s) => s.addCustomSite);
+  const placing = useStore((s) => s.placing);
+  const setPlacing = useStore((s) => s.setPlacing);
   const tMs = useStore((s) => s.tMs);
   const summaries = useAllSummaries();
 
@@ -187,13 +189,12 @@ export function MoonGlobe() {
   };
 
   const visible = sites.map((s) => ({ s, p: project(s.lat, s.lon) })).filter((x): x is { s: Site; p: [number, number] } => x.p !== null);
-  const hiddenCount = sites.length - visible.length;
   const sunP = sub ? project(sub.sLat, sub.sLon) : null;
   const earthP = sub ? project(sub.eLat, sub.eLon) : null;
 
   return (
     <div
-      className="map__view map__view--globe" ref={ref}
+      className={`map__view map__view--globe${placing ? " is-placing" : ""}`} ref={ref}
       onWheel={(e) => setView((v) => ({ ...v, zoom: clamp(v.zoom * Math.pow(1.0016, -e.deltaY), 1, 6) }))}
       onPointerDown={(e) => {
         // let the zoom buttons receive their own click instead of starting a turn
@@ -209,10 +210,17 @@ export function MoonGlobe() {
         if (Math.hypot(dx, dy) > 3) d.moved = true;
         if (d.moved) setView((v) => ({ ...v, lon: wrap180(d.lon - deg(dx / R)), lat: clamp(d.lat + deg(dy / R), -90, 90) }));
       }}
-      onPointerUp={() => (drag.current = null)}
-      onDoubleClick={(e) => {
-        const ll = latLonAt(...local(e));
-        if (ll) addCustom(Math.round(ll[0] * 1000) / 1000, Math.round(ll[1] * 1000) / 1000);
+      onPointerUp={(e) => {
+        const d = drag.current;
+        drag.current = null;
+        // a plain click (no drag) while "Add site" is armed places the site
+        if (d && !d.moved && useStore.getState().placing) {
+          const ll = latLonAt(...local(e));
+          if (ll) {
+            addCustom(Math.round(ll[0] * 1000) / 1000, Math.round(ll[1] * 1000) / 1000);
+            setPlacing(false);
+          }
+        }
       }}
     >
       <canvas ref={canvasRef} className="map__canvas" style={{ width: w, height: h }} />
@@ -252,19 +260,15 @@ export function MoonGlobe() {
         </svg>
       )}
       {tip && <SiteTip tip={tip} w={w} h={h} />}
+      <PlacingHint />
       <div className="map__tools">
         <div className="iconrow">
+          <AddSiteButton />
           <button type="button" className="iconbtn" onClick={() => setView((v) => ({ ...v, zoom: clamp(v.zoom * 1.6, 1, 6) }))} aria-label="Zoom in"><Plus size={14} /></button>
           <button type="button" className="iconbtn" onClick={() => setView((v) => ({ ...v, zoom: clamp(v.zoom / 1.6, 1, 6) }))} aria-label="Zoom out"><Minus size={14} /></button>
           <button type="button" className="iconbtn" onClick={() => setView((v) => ({ ...v, zoom: 1 }))} aria-label="Reset zoom"><RotateCcw size={14} /></button>
         </div>
       </div>
-      {sub && (
-        <p className="map__status">
-          {hiddenCount > 0 ? `${hiddenCount} sites on the other side. ` : ""}
-          Earth overhead at <span className="num">{fmtLatLon(sub.eLat, wrap180(sub.eLon), 1)}</span>
-        </p>
-      )}
     </div>
   );
 }

@@ -68,22 +68,23 @@ const SiteRow = memo(function SiteRow({
   const spark = useMemo(() => {
     const max = Math.max(1, ...Array.from(flags.powerW.subarray(i0, i1 + 1)));
     const stride = Math.max(1, Math.floor((i1 - i0) / 600));
-    let p = `M${x(geom.startMs + i0 * geom.stepMs).toFixed(1)},${y + 42}`;
+    let p = `M${x(geom.startMs + i0 * geom.stepMs).toFixed(1)},${y + 28}`;
     for (let i = i0; i <= i1; i += stride) {
-      p += `L${x(geom.startMs + i * geom.stepMs).toFixed(1)},${(y + 42 - (flags.powerW[i] / max) * 6).toFixed(1)}`;
+      p += `L${x(geom.startMs + i * geom.stepMs).toFixed(1)},${(y + 28 - (flags.powerW[i] / max) * 5).toFixed(1)}`;
     }
-    return `${p}L${x(geom.startMs + i1 * geom.stepMs).toFixed(1)},${y + 42}Z`;
+    return `${p}L${x(geom.startMs + i1 * geom.stepMs).toFixed(1)},${y + 28}Z`;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geom, flags, i0, i1, w, t0, t1, y]);
-  const track = (yy: number) => <rect x={LABEL_W} y={yy} width={w - LABEL_W - 8} height={8} fill={COLOR.dark} fillOpacity={0.45} rx={1} />;
+  // three 5 px strips (Sun, Earth, both) with a power trace under them
+  const track = (yy: number) => <rect x={LABEL_W} y={yy} width={w - LABEL_W - 8} height={5} fill={COLOR.dark} fillOpacity={0.45} rx={1} />;
   return (
     <g opacity={focused ? 1 : 0.82}>
-      {track(y + 4)}
-      {track(y + 14)}
-      {track(y + 24)}
-      {bars(metrics.sunWindows, x, y + 4, 8, COLOR.sun, "s")}
-      {bars(metrics.earthWindows, x, y + 14, 8, COLOR.earth, "e")}
-      {bars(metrics.bothWindows, x, y + 24, 8, COLOR.both, "b")}
+      {track(y + 3)}
+      {track(y + 10)}
+      {track(y + 17)}
+      {bars(metrics.sunWindows, x, y + 3, 5, COLOR.sun, "s")}
+      {bars(metrics.earthWindows, x, y + 10, 5, COLOR.earth, "e")}
+      {bars(metrics.bothWindows, x, y + 17, 5, COLOR.both, "b")}
       <path d={spark} fill={COLOR.sun} fillOpacity={0.28} />
     </g>
   );
@@ -199,7 +200,7 @@ export function Timeline() {
     };
     setTip({
       x: mx, y: AXIS_H + row * ROW_H, site: d.site.name, tMs: t,
-      lines: [
+      lines: simple ? [] : [
         describe("Sunlit", d.metrics.sunWindows, "Dark"),
         describe("Earth in view", d.metrics.earthWindows, "No direct link"),
         describe(say("Power + comms"), d.metrics.bothWindows, `No ${say("power + comms")} window`),
@@ -302,7 +303,7 @@ export function Timeline() {
           </div>
         )}
         {tip && (
-          <div className="tip" style={{ left: clamp(tip.x + 12, LABEL_W, w - 250), top: Math.max(0, tip.y - 78) }}>
+          <div className="tip" style={{ left: clamp(tip.x + 12, LABEL_W, w - 250), top: Math.max(0, tip.y - (tip.lines.length ? 78 : 40)) }}>
             <strong>{tip.site}</strong>
             <span className="num">{fmtDateTime(tip.tMs)}</span>
             {tip.lines.map((l) => (

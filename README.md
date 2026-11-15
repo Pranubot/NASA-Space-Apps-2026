@@ -23,7 +23,7 @@ Other commands, all from `app/`:
 |---|---|
 | `npm test` | 23 unit tests on the astronomy, visibility and verdict maths, checked against the shipped Horizons data |
 | `npm run build` | Type-check and build the static site into `app/dist` |
-| `VITE_DATA_PROVIDER=mock npm run dev` | Run with no data files (analytic ephemeris, procedural terrain, "Mock data" badge) |
+| `VITE_DATA_PROVIDER=mock npm run dev` | Run with no data files (analytic ephemeris, procedural terrain, "Mock data" warning) |
 
 Requires Node 22 or newer (built with Node 24). The NASA-derived data (16 MB) is already in `app/public/data`.
 
@@ -41,7 +41,7 @@ Requires Node 22 or newer (built with Node 24). The NASA-derived data (16 MB) is
   plays. Switch to a whole-Moon globe you can turn, lit from the real Sun direction.
 - **26 curated sites**: Artemis III candidate regions, CLPS landers, a commercial lander, international
   missions, the six Apollo sites, and the permanently shadowed floor of Shackleton. Add any coordinate
-  by typing it or double-clicking the map; its horizon is computed from LOLA in the browser.
+  by typing it, or with the pin button on the map and a click; its horizon is computed from LOLA in the browser.
 - **Drag and drop, like a video editor.** The site list and map are the bin, the timeline holds up to
   three tracks, the panorama is the preview and the right-hand inspector shows one thing at a time
   (Compare, Limits, What if). Drag a site from the list or the map onto the timeline to add a track,
@@ -62,8 +62,8 @@ Requires Node 22 or newer (built with Node 24). The NASA-derived data (16 MB) is
 - **Export** the panorama as PNG and the windows as CSV.
 - **GO map.** A toggle on the south-pole map colours the ground itself by verdict for the current
   landing date, mission length and limits. Every square is scored as a landing site, the map
-  sharpens as you zoom, and it recolours when the date or a limit changes. Double-click a square to
-  open that spot as a site.
+  sharpens as you zoom, and it recolours when the date or a limit changes. Arm the pin button and click
+  a square to open that spot as a site.
 - **Guided tour.** The Tour button (also on the opening screen) walks through the default scenario in
   eight captioned steps: the polar sky, the timeline, a GO site, a NO-GO site, a two-week slip, the 3D
   terrain and the data sources. Arrow keys move between steps, `Esc` exits and restores your scenario.
@@ -132,7 +132,7 @@ its rim averages over 55%.
   treat it as a guide to where to look, then open the spot for the finer calculation.
 - Custom coordinates use coarser grids in the browser: 400 m at the pole, about 7.6 km elsewhere.
 - Outside the published date range the app falls back to an analytic lunar model (Meeus), good to
-  about 0.5°, and shows an "Approximate" badge.
+  about 0.5°, and shows an "Approximate" warning in the top bar.
 - Science values (1 to 5) are assigned by our team for the trade view. They are not NASA ratings.
 - No thermal model, relay satellites or surface mobility.
 - The Moon Trek link uses its URL-hash view format; Quickmap has no stable deep link, so that link

@@ -1,6 +1,6 @@
 // Top bar: identity, scenario title, landing date and mission length, provenance, guide, share.
 
-import { BookOpen, Database, Play, Share2 } from "lucide-react";
+import { BookOpen, Play, Share2, TriangleAlert } from "lucide-react";
 import { isoDate, parseIsoDate } from "../lib/time";
 import { scenarioOf } from "../hooks/useApp";
 import { DAY_OPTIONS, useStore } from "../state/store";
@@ -79,13 +79,16 @@ export function Header() {
           <button type="button" className={simple ? "is-on" : ""} aria-pressed={simple} onClick={() => setSimple(true)}>Simple</button>
           <button type="button" className={simple ? "" : "is-on"} aria-pressed={!simple} onClick={() => setSimple(false)}>Expert</button>
         </div>
-        <button
-          type="button" className={`badge${ds?.name === "mock" || outOfRange ? " badge--warn" : ""}`} onClick={() => setDrawer("sources")}
-          title="Where every number comes from"
-        >
-          <Database size={13} />
-          {ds?.name === "mock" ? "Mock data" : outOfRange ? "Approximate: outside Horizons range" : "JPL Horizons + LOLA"}
-        </button>
+        {/* data sources live in the Guide; this only appears when the numbers are approximate */}
+        {(ds?.name === "mock" || outOfRange) && (
+          <button
+            type="button" className="badge badge--warn" onClick={() => setDrawer("sources")}
+            title="These numbers use an approximate model. Click to see why."
+          >
+            <TriangleAlert size={13} />
+            {ds?.name === "mock" ? "Mock data" : "Approximate: outside Horizons range"}
+          </button>
+        )}
         <button type="button" className="btn btn--ghost" onClick={startTour} title="A two-minute guided tour of the planner">
           <Play size={14} /> Tour
         </button>
