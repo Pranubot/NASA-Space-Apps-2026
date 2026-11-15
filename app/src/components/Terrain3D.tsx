@@ -266,6 +266,27 @@ function Markers({ inst, name, sizeKm, close }: { inst: Instant; name: string; s
   );
 }
 
+const BASE_FOV = 38;
+
+/**
+ * Keep the terrain the same size on screen when the view changes height (resizing the timeline,
+ * a smaller window). A fixed vertical field of view would shrink everything as the view gets
+ * shorter; instead the field of view follows the height, so the view just shows less or more.
+ */
+function ConstantScale() {
+  const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
+  const height = useThree((s) => s.size.height);
+  const ref = useRef(0);
+  useEffect(() => {
+    if (height <= 0) return;
+    if (!ref.current) ref.current = height;
+    const half = Math.atan(Math.tan(rad(BASE_FOV / 2)) * (height / ref.current));
+    camera.fov = THREE.MathUtils.clamp((half * 2 * 180) / Math.PI, 14, 80);
+    camera.updateProjectionMatrix();
+  }, [camera, height]);
+  return null;
+}
+
 type CamMode = "orbit" | "lander";
 
 function CameraRig({ mode, inst, sizeKm, nonce }: { mode: CamMode; inst: Instant; sizeKm: number; nonce: number }) {
@@ -330,10 +351,11 @@ export default function Terrain3D({ data, inst }: { data: SiteData; inst: Instan
     <div className="t3d">
       {patch ? (
         <Canvas
-          camera={{ position: [sizeKm * 0.42, sizeKm * 0.36, sizeKm * 0.62], fov: 38, near: 0.02, far: 6000 }}
+          camera={{ position: [sizeKm * 0.42, sizeKm * 0.36, sizeKm * 0.62], fov: BASE_FOV, near: 0.02, far: 6000 }}
           gl={{ antialias: true, preserveDrawingBuffer: true }} dpr={[1, 2]}
         >
           <color attach="background" args={["#000000"]} />
+          <ConstantScale />
           <Stars radius={2400} depth={300} count={2600} factor={22} saturation={0} fade speed={0} />
           <TerrainMesh patch={patch} inst={inst} exag={exag} contours={contours} siteElevationM={site.elevationM ?? 0} />
           <Suspense fallback={null}>

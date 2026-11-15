@@ -42,6 +42,22 @@ function loadPanels(): Panels {
   return DEFAULT_PANELS;
 }
 
+/** Timeline height, px. Dragging below DOCK_SNAP folds it to just its header. */
+export const DOCK_DEFAULT = 204;
+export const DOCK_MIN = 39;
+export const DOCK_SNAP = 84;
+const DOCK_KEY = "lsn.dockH";
+
+function loadDockH(): number {
+  try {
+    const v = Number(window.localStorage.getItem(DOCK_KEY));
+    if (Number.isFinite(v) && v >= DOCK_MIN) return v;
+  } catch {
+    // storage blocked: use the default
+  }
+  return DOCK_DEFAULT;
+}
+
 function savePanels(p: Panels) {
   try {
     window.localStorage.setItem(PANELS_KEY, JSON.stringify(p));
@@ -93,6 +109,7 @@ interface State extends ScenarioState {
   analysisTab: AnalysisTab;
   inspectorTab: InspectorTab;
   panels: Panels;
+  dockH: number;
   drag: DragState | null;
   drawer: Drawer;
   introOpen: boolean;
@@ -108,6 +125,8 @@ interface State extends ScenarioState {
   setDrag(d: DragState | null): void;
   setInspectorTab(t: InspectorTab): void;
   togglePanel(k: keyof Panels): void;
+  /** live height while dragging; pass save=true when the drag ends */
+  setDockH(h: number, save?: boolean): void;
   focus(id: string): void;
   setStart(ms: number, keepOffset?: boolean): void;
   setDays(d: number): void;
@@ -172,6 +191,7 @@ export const useStore = create<State>((set, get) => ({
   analysisTab: "slip",
   inspectorTab: "compare",
   panels: loadPanels(),
+  dockH: loadDockH(),
   drag: null,
   drawer: null,
   introOpen: true,
@@ -218,6 +238,17 @@ export const useStore = create<State>((set, get) => ({
 
   setDrag: (drag) => set({ drag }),
   setInspectorTab: (inspectorTab) => set({ inspectorTab }),
+  setDockH: (h, save = false) => {
+    const dockH = Math.round(Math.max(DOCK_MIN, h));
+    set({ dockH });
+    if (save) {
+      try {
+        window.localStorage.setItem(DOCK_KEY, String(dockH));
+      } catch {
+        // not fatal: the height just won't be remembered
+      }
+    }
+  },
   togglePanel: (k) =>
     set((s) => {
       const panels = { ...s.panels, [k]: !s.panels[k] };
