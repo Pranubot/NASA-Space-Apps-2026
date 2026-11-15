@@ -1,6 +1,7 @@
 // Right-hand inspector: one job at a time (compare, limits, what-if) instead of three panels at
 // once. Also a drop zone: a site dragged here from the list or the map joins the comparison.
 
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { findSite, useStore, type InspectorTab } from "../state/store";
 import { Analysis } from "./Analysis";
 import { ConstraintsPanel } from "./ConstraintsPanel";
@@ -15,6 +16,8 @@ const TABS: { id: InspectorTab; label: string; title: string }[] = [
 export function Inspector() {
   const tab = useStore((s) => s.inspectorTab);
   const setTab = useStore((s) => s.setInspectorTab);
+  const open = useStore((s) => s.panels.inspector);
+  const togglePanel = useStore((s) => s.togglePanel);
   const dragActive = useStore((s) => s.drag !== null);
   const dropKind = useStore((s) => s.drag?.action?.kind ?? null);
   // only light up when the pointer is over this panel, not the timeline
@@ -24,17 +27,36 @@ export function Inspector() {
     return !!el?.closest('[data-drop="compare"]');
   });
 
+  const dropClass = `${dragActive ? " is-droppable" : ""}${overHere && (dropKind === "add" || dropKind === "replace") ? " is-target" : ""}`;
+
+  if (!open) {
+    // folded away: a slim rail with an arrow pulls it back into view
+    return (
+      <aside className={`inspector inspector--collapsed${dropClass}`} data-drop="compare" aria-label="Inspector">
+        <button type="button" className="inspector__rail" onClick={() => togglePanel("inspector")} aria-expanded={false} title="Show Compare, Limits and What if">
+          <ChevronLeft size={16} aria-hidden />
+          <span className="inspector__rail-label">{TABS.map((t) => t.label).join("  ·  ")}</span>
+        </button>
+      </aside>
+    );
+  }
+
   return (
-    <aside
-      className={`inspector${dragActive ? " is-droppable" : ""}${overHere && (dropKind === "add" || dropKind === "replace") ? " is-target" : ""}`}
-      data-drop="compare" aria-label="Inspector"
-    >
-      <div className="inspector__tabs tabs" role="tablist" aria-label="Inspector">
-        {TABS.map((t) => (
-          <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} className={tab === t.id ? "is-on" : ""} title={t.title} onClick={() => setTab(t.id)}>
-            {t.label}
-          </button>
-        ))}
+    <aside className={`inspector${dropClass}`} data-drop="compare" aria-label="Inspector">
+      <div className="inspector__tabs">
+        <div className="tabs" role="tablist" aria-label="Inspector">
+          {TABS.map((t) => (
+            <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} className={tab === t.id ? "is-on" : ""} title={t.title} onClick={() => setTab(t.id)}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+        <button
+          type="button" className="iconbtn inspector__collapse" onClick={() => togglePanel("inspector")} aria-expanded
+          aria-label="Hide this panel" title="Hide this panel to give the sky more room"
+        >
+          <ChevronRight size={16} />
+        </button>
       </div>
       <div className="inspector__body" role="tabpanel">
         {tab === "compare" && <Scorecards />}

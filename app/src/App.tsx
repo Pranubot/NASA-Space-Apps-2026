@@ -86,6 +86,7 @@ export default function App() {
   const drawer = useStore((s) => s.drawer);
   const toast = useStore((s) => s.toast);
   const simple = useStore((s) => s.simple);
+  const inspectorOpen = useStore((s) => s.panels.inspector);
   const touring = useStore((s) => s.tourStep !== null);
   usePlayback();
   useUrlSync(!!ds && !introOpen);
@@ -107,7 +108,7 @@ export default function App() {
       {ds ? (
         <div className={`app${simple ? " is-simple" : ""}`} inert={introOpen}>
           <Header />
-          <main className="main">
+          <main className={`main${inspectorOpen ? "" : " main--wide"}`}>
             <div className="rail rail--left">
               <SiteMap />
               <SiteList />

@@ -154,6 +154,9 @@ a:hover {
   gap: 1px;
   min-height: 0;
 }
+.main--wide {
+  grid-template-columns: clamp(264px, 20.5vw, 328px) minmax(0, 1fr) 36px;
+}
 
 .rail {
   display: flex;
@@ -183,9 +186,37 @@ a:hover {
 }
 .inspector__tabs {
   flex: none;
-  padding-left: 4px;
+  padding: 0 4px;
   border-bottom: 1px solid var(--line);
   display: flex;
+  align-items: center;
+}
+.inspector__collapse {
+  margin-left: auto;
+}
+.inspector--collapsed {
+  align-items: stretch;
+}
+.inspector__rail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding-top: 11px;
+  color: var(--text-2);
+  transition: background var(--fast) var(--ease), color var(--fast) var(--ease);
+}
+.inspector__rail:hover {
+  background: var(--panel-2);
+  color: var(--text);
+}
+.inspector__rail-label {
+  writing-mode: vertical-rl;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: pre;
 }
 .inspector__body {
   flex: 1 1 0;
