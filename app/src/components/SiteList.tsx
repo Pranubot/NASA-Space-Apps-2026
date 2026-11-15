@@ -51,7 +51,7 @@ function CustomForm() {
         <input inputMode="decimal" placeholder="-137.31" value={lon} onChange={(e) => setLon(e.target.value)} aria-invalid={!!error} />
       </label>
       <button type="submit" className="btn btn--primary">Add</button>
-      {error ? <p className="custom__error" role="alert">{error}</p> : <p className="custom__hint">East-positive degrees. You can also double-click the map.</p>}
+      {error ? <p className="custom__error" role="alert">{error}</p> : <p className="custom__hint">East-positive degrees. Or use the pin button on the map, then click where you want it.</p>}
     </form>
   );
 }

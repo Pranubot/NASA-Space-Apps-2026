@@ -98,6 +98,8 @@ interface State extends ScenarioState {
   drawer: Drawer;
   introOpen: boolean;
   hoverSiteId: string | null;
+  /** "Add site" is armed: the next plain click on a map places a custom site */
+  placing: boolean;
   toast: { id: number; text: string } | null;
   /** guided tour: the step on screen, or null when the tour is closed */
   tourStep: number | null;
@@ -127,6 +129,7 @@ interface State extends ScenarioState {
   setDrawer(d: Drawer): void;
   closeIntro(): void;
   setHoverSite(id: string | null): void;
+  setPlacing(on: boolean): void;
   setSimple(s: boolean): void;
   startTour(): void;
   setTourStep(n: number): void;
@@ -179,6 +182,7 @@ export const useStore = create<State>((set, get) => ({
   drawer: null,
   introOpen: true,
   hoverSiteId: null,
+  placing: false,
   toast: null,
   simple: true,
   tourStep: null,
@@ -282,6 +286,7 @@ export const useStore = create<State>((set, get) => ({
   setDrawer: (drawer) => set({ drawer }),
   closeIntro: () => set({ introOpen: false }),
   setHoverSite: (hoverSiteId) => set({ hoverSiteId }),
+  setPlacing: (placing) => set({ placing }),
   setSimple: (simple) => set({ simple }),
   startTour: () => {
     const s = get();

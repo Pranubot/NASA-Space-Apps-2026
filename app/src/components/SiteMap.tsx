@@ -14,6 +14,7 @@ import { useSize } from "../hooks/useApp";
 import { allSites, useStore } from "../state/store";
 import { Pin, SiteTip, type Tip } from "./MapPin";
 import { GoMap } from "./GoMap";
+import { AddSiteButton, PlacingHint } from "./AddSiteButton";
 import { MoonGlobe } from "./MoonGlobe";
 
 const R_M = R_MOON_KM * 1000;
@@ -179,6 +180,8 @@ export function SiteMap() {
   const setHoverSite = useStore((s) => s.setHoverSite);
   const focus = useStore((s) => s.focus);
   const addCustom = useStore((s) => s.addCustomSite);
+  const placing = useStore((s) => s.placing);
+  const setPlacing = useStore((s) => s.setPlacing);
   const tMs = useStore((s) => s.tMs);
   const summaries = useAllSummaries();
 
@@ -301,7 +304,7 @@ export function SiteMap() {
       </header>
       {region === "global" ? <MoonGlobe /> : null}
       <div
-        className="map__view map__view--polar" ref={ref} hidden={region !== "polar"}
+        className={`map__view map__view--polar${placing ? " is-placing" : ""}`} ref={ref} hidden={region !== "polar"}
         onWheel={(e) => region === "polar" && zoom(Math.pow(1.0018, e.deltaY), ...local(e))}
         onPointerDown={(e) => {
           if (region !== "polar") return;
@@ -321,12 +324,19 @@ export function SiteMap() {
             setView((v) => ({ ...v, cx: clamp(d.cx - dx * scale, -lim, lim), cy: clamp(d.cy + dy * scale, -lim, lim) }));
           }
         }}
-        onPointerUp={() => (drag.current = null)}
-        onPointerLeave={() => setCursor(null)}
-        onDoubleClick={(e) => {
-          const ll = latLonAt(...local(e));
-          if (ll) addCustom(Math.round(ll[0] * 1000) / 1000, Math.round(ll[1] * 1000) / 1000);
+        onPointerUp={(e) => {
+          const d = drag.current;
+          drag.current = null;
+          // a plain click (no drag) while "Add site" is armed places the site
+          if (d && !d.moved && useStore.getState().placing) {
+            const ll = latLonAt(...local(e));
+            if (ll) {
+              addCustom(Math.round(ll[0] * 1000) / 1000, Math.round(ll[1] * 1000) / 1000);
+              setPlacing(false);
+            }
+          }
         }}
+        onPointerLeave={() => setCursor(null)}
       >
         {region === "polar" && <canvas ref={canvasRef} className="map__canvas" style={{ width: w, height: h }} />}
         {region === "polar" && goMap && grid && w > 0 && <GoMap grid={grid} view={view} w={w} h={h} scale={scale} cursor={cursor} />}
@@ -399,9 +409,11 @@ export function SiteMap() {
           </svg>
         )}
         {tip && <SiteTip tip={tip} w={w} h={h} />}
+        {region === "polar" && <PlacingHint />}
         {region === "polar" && (
           <div className="map__tools">
             <div className="iconrow">
+              <AddSiteButton />
               <button type="button" className="iconbtn" onClick={() => zoom(1 / 1.7)} aria-label="Zoom in"><Plus size={14} /></button>
               <button type="button" className="iconbtn" onClick={() => zoom(1.7)} aria-label="Zoom out"><Minus size={14} /></button>
               <button type="button" className="iconbtn" onClick={fit} aria-label="Fit the whole polar cap"><RotateCcw size={14} /></button>

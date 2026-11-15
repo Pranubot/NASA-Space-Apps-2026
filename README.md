@@ -41,7 +41,7 @@ Requires Node 22 or newer (built with Node 24). The NASA-derived data (16 MB) is
   plays. Switch to a whole-Moon globe you can turn, lit from the real Sun direction.
 - **26 curated sites**: Artemis III candidate regions, CLPS landers, a commercial lander, international
   missions, the six Apollo sites, and the permanently shadowed floor of Shackleton. Add any coordinate
-  by typing it or double-clicking the map; its horizon is computed from LOLA in the browser.
+  by typing it, or with the pin button on the map and a click; its horizon is computed from LOLA in the browser.
 - **Drag and drop, like a video editor.** The site list and map are the bin, the timeline holds up to
   three tracks, the panorama is the preview and the right-hand inspector shows one thing at a time
   (Compare, Limits, What if). Drag a site from the list or the map onto the timeline to add a track,
@@ -62,8 +62,8 @@ Requires Node 22 or newer (built with Node 24). The NASA-derived data (16 MB) is
 - **Export** the panorama as PNG and the windows as CSV.
 - **GO map.** A toggle on the south-pole map colours the ground itself by verdict for the current
   landing date, mission length and limits. Every square is scored as a landing site, the map
-  sharpens as you zoom, and it recolours when the date or a limit changes. Double-click a square to
-  open that spot as a site.
+  sharpens as you zoom, and it recolours when the date or a limit changes. Arm the pin button and click
+  a square to open that spot as a site.
 - **Guided tour.** The Tour button (also on the opening screen) walks through the default scenario in
   eight captioned steps: the polar sky, the timeline, a GO site, a NO-GO site, a two-week slip, the 3D
   terrain and the data sources. Arrow keys move between steps, `Esc` exits and restores your scenario.
