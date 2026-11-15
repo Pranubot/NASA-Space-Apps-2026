@@ -1,14 +1,14 @@
 // Centre column: the focused site's sky. Tabs switch between the compared sites and between the
 // horizon panorama and the 3D terrain.
 
-import { Box, Mountain } from "lucide-react";
+import { Box, ChevronDown, Mountain } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Suspense, lazy, useMemo } from "react";
 import { slipAnalysis, type Check } from "../lib/scenario";
 import { CATEGORY_LABEL, VERDICT_LABEL } from "../lib/theme";
 import { fmtDayMonth, fmtLatLon } from "../lib/time";
 import { useInstant, useSelectedData, useSiteData, type SiteData } from "../hooks/useSiteData";
-import { SLIP_AFTER_DAYS, useStore } from "../state/store";
+import { SLIP_AFTER_DAYS, useSay, useStore } from "../state/store";
 import { HorizonPanorama } from "./HorizonPanorama";
 import { Readouts } from "./Readouts";
 import { VerdictChip, VerdictIcon } from "./Scorecards";
@@ -102,6 +102,9 @@ function AnswerCard({ data }: { data: SiteData }) {
   const c = useStore((s) => s.constraints);
   const startMs = useStore((s) => s.startMs);
   const days = useStore((s) => s.days);
+  const open = useStore((s) => s.panels.answer);
+  const say = useSay();
+  const togglePanel = useStore((s) => s.togglePanel);
   const { site, metrics: m, evaluation: ev } = data;
   const check = (id: Check["id"]) => ev.checks.find((k) => k.id === id)!;
   // the first later landing day whose verdict differs from today's plan
@@ -111,32 +114,41 @@ function AnswerCard({ data }: { data: SiteData }) {
   );
 
   return (
-    <section className="answer" aria-label={`Verdict for ${site.name}`}>
-      <p className="answer__head">
+    <section className={`answer${open ? " is-open" : ""}`} aria-label={`Verdict for ${site.name}`}>
+      <button type="button" className="answer__head" onClick={() => togglePanel("answer")} aria-expanded={open} title={open ? "Hide the details" : "Show why, and the numbers behind it"}>
         <VerdictChip v={ev.overall} />
-        <strong>{site.name}:</strong> {HEADLINE[ev.overall]} {ev.overall === "GO" ? "Every mission limit is met." : ev.driver.reason}
-      </p>
-      <dl className="answer__facts">
-        <div>
-          <dt>Can work and talk home</dt>
-          <dd><VerdictIcon v={check("both").verdict} size={13} /><span className="num">{m.bothHoursPerDay.toFixed(1)} h</span> a day</dd>
-          <dd className="answer__sub">needs {c.minBothHoursPerDay} h</dd>
+        <strong>{site.name}:</strong>
+        <span className="answer__decision">
+          {ev.overall === "GO" ? HEADLINE.GO : `${HEADLINE[ev.overall].slice(0, -1)}: ${say(ev.driver.label).toLowerCase()}`}
+        </span>
+        <ChevronDown size={16} className="disclosure" aria-hidden />
+      </button>
+      {open && (
+        <div className="answer__more">
+          <p className="answer__why">{ev.overall === "GO" ? "Every mission limit is met." : ev.driver.reason}</p>
+          <dl className="answer__facts">
+            <div>
+              <dt>Can work and talk home</dt>
+              <dd><VerdictIcon v={check("both").verdict} size={13} /><span className="num">{m.bothHoursPerDay.toFixed(1)} h</span> a day</dd>
+              <dd className="answer__sub">needs {c.minBothHoursPerDay} h</dd>
+            </div>
+            <div>
+              <dt>Longest night</dt>
+              <dd><VerdictIcon v={check("dark").verdict} size={13} /><span className="num">{Math.round(m.longestDarkH)} h</span></dd>
+              <dd className="answer__sub">battery lasts {c.maxDarkH} h</dd>
+            </div>
+            <div>
+              <dt>If the landing slips</dt>
+              {change ? (
+                <dd><VerdictIcon v={change.verdict} size={13} />{VERDICT_LABEL[change.verdict]} after {plural(change.offsetDays, "day")}</dd>
+              ) : (
+                <dd><VerdictIcon v={ev.overall} size={13} />Still {VERDICT_LABEL[ev.overall]}</dd>
+              )}
+              <dd className="answer__sub">{change ? `landing ${fmtDayMonth(change.startMs)}` : `for at least ${SLIP_AFTER_DAYS} days`}</dd>
+            </div>
+          </dl>
         </div>
-        <div>
-          <dt>Longest night</dt>
-          <dd><VerdictIcon v={check("dark").verdict} size={13} /><span className="num">{Math.round(m.longestDarkH)} h</span></dd>
-          <dd className="answer__sub">battery lasts {c.maxDarkH} h</dd>
-        </div>
-        <div>
-          <dt>If the landing slips</dt>
-          {change ? (
-            <dd><VerdictIcon v={change.verdict} size={13} />{VERDICT_LABEL[change.verdict]} after {plural(change.offsetDays, "day")}</dd>
-          ) : (
-            <dd><VerdictIcon v={ev.overall} size={13} />Still {VERDICT_LABEL[ev.overall]}</dd>
-          )}
-          <dd className="answer__sub">{change ? `landing ${fmtDayMonth(change.startMs)}` : `for at least ${SLIP_AFTER_DAYS} days`}</dd>
-        </div>
-      </dl>
+      )}
     </section>
   );
 }

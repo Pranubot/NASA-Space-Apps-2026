@@ -1138,6 +1138,55 @@ input[type="checkbox"] {
   border-top: 1px solid var(--line);
   container-type: inline-size;
 }
+/* one line with the Sun, Earth and Power decisions; the whole line is the toggle */
+.readouts__bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  min-height: 40px;
+  padding: 0 12px 0 14px;
+  font-size: 13px;
+  text-align: left;
+  white-space: nowrap;
+  transition: background var(--fast) var(--ease);
+}
+.readouts.is-open .readouts__bar {
+  border-bottom: 1px solid var(--line);
+}
+.readouts__bar:hover {
+  background: var(--panel-2);
+}
+.sum {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--text-2);
+}
+.sum > svg {
+  flex: none;
+  color: var(--text-3);
+}
+.sum b {
+  color: var(--text);
+  font-weight: 650;
+}
+.sum--sun > svg {
+  color: var(--sun);
+}
+.sum--earth > svg {
+  color: var(--earth);
+}
+.sum--both > svg {
+  color: var(--both);
+}
+.sum__when {
+  color: var(--text-3);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 @container (max-width: 800px) {
   .ro .lens {
     display: none;
@@ -2272,22 +2321,59 @@ kbd {
 
 .answer {
   flex: none;
-  padding: 10px 14px 11px;
   border-bottom: 1px solid var(--line);
 }
+/* one-line decision; the whole line is the toggle */
 .answer__head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 12px 0 14px;
+  color: var(--text-2);
+  font-size: 13px;
+  text-align: left;
+  white-space: nowrap;
+  transition: background var(--fast) var(--ease);
+}
+.answer__head:hover {
+  background: var(--panel-2);
+}
+.answer__head strong {
+  color: var(--text);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.answer__decision {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.answer__more {
+  padding: 0 14px 11px;
+}
+.answer__why {
   margin: 0;
   color: var(--text-2);
   font-size: 13px;
   line-height: 1.5;
   text-wrap: pretty;
 }
-.answer__head .verdict {
-  margin-right: 8px;
-  vertical-align: 1px;
+
+/* shared disclosure arrow: points down when folded, flips up when open */
+.disclosure {
+  flex: none;
+  margin-left: auto;
+  color: var(--text-3);
+  transition: transform var(--fast) var(--ease), color var(--fast) var(--ease);
 }
-.answer__head strong {
+button:hover > .disclosure {
   color: var(--text);
+}
+[aria-expanded="true"] > .disclosure {
+  transform: rotate(180deg);
 }
 .answer__facts {
   display: grid;
