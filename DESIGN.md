@@ -1,5 +1,5 @@
 ---
-name: Lunar Landing Site Navigator
+name: LunaSol
 description: Dark mission-control workspace where the sky at a landing site drives every panel
 colors:
   bg: "#070b14"
